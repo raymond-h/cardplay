@@ -22,5 +22,8 @@
     "grunt": "~0.4.2",
     "grunt-contrib-coffee": "~0.8.2",
     "grunt-coffeelint": "0.0.8"
+  },
+  "dependencies": {
+    "irc": "~0.3.6"
   }
 }
