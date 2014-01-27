@@ -1,0 +1,21 @@
+{
+  "name": "cardplay",
+  "version": "0.0.0",
+  "description": "Card-battling and scripting, now with 90% more JS/CS!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "hurr"
+  },
+  "keywords": [
+    "card",
+    "game",
+    "battle",
+    "scripting"
+  ],
+  "author": "Raymond H.",
+  "license": "BSD-2-Clause"
+}
