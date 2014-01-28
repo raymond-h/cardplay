@@ -8,7 +8,7 @@ module.exports = (grunt) ->
 
 		coffee:
 			build:
-				files: 'index.js': 'index.coffee'
+				files: 'lib/*.js': 'src/*.coffee'
 
 		coffeelint:
 			build:
