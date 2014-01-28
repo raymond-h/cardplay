@@ -6,10 +6,6 @@
 	"scripts": {
 		"cstart": "coffee index.coffee"
 	},
-	"repository": {
-		"type": "git",
-		"url": "hurr"
-	},
 	"keywords": [
 		"card",
 		"game",
