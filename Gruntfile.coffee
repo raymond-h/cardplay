@@ -17,3 +17,4 @@ module.exports = (grunt) ->
 	grunt.registerTask 'default', ["build"]
 
 	grunt.registerTask 'build', ['coffeelint:build', 'coffee:build']
+	grunt.registerTask 'lint', ['coffeelint:build']
