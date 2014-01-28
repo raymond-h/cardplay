@@ -9,7 +9,11 @@ module.exports = (grunt) ->
 
 		coffee:
 			build:
-				files: 'lib/*.js': 'src/*.coffee'
+				expand: yes
+				cwd: 'src/'
+				src: '*.coffee'
+				dest: 'lib/'
+				ext: '.js'
 
 		coffeelint:
 			build:
