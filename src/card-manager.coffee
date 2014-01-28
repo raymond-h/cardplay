@@ -1,6 +1,8 @@
 path = require 'path'
 fs = require 'fs'
+_ = require 'underscore'
 CoffeeScript = require 'coffee-script'
+{EventEmitter} = require 'events'
 
 fileUtils = require './file-utils'
 
@@ -19,6 +21,10 @@ getJsSource = (file) ->
 			catch e
 				console.error e.stack
 
+class Card extends EventEmitter
+	constructor: (@type, config) ->
+		_.extend @, config
+
 loadScript = (file, callback) ->
 	file = path.resolve file
 	source = getJsSource file
@@ -33,10 +39,12 @@ runScript = (code, file, callback) ->
 
 	sandbox =
 		ready: (callback) -> readyCallback = callback
+		console: console
 
 	vm.runInNewContext code, sandbox, file
 
-	readyCallback -> { on: -> }
+	readyCallback (type, config) ->
+		new Card type, config
 
 exports.load = (folder, callback) ->
 	fileUtils.walkFolder folder, (err, file) ->
@@ -45,4 +53,5 @@ exports.load = (folder, callback) ->
 		# console.log "Got file #{file} with extension #{path.extname file}"
 		if (path.extname file) in ['.js', '.coffee', '.lit-coffee', '.coffee.md']
 			loadScript file
+
 	, callback
