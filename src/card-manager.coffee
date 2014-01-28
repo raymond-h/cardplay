@@ -28,7 +28,7 @@ walkFolder = (folder, callback) ->
 		for file in files
 			fullPath = path.resolve folder, file
 
-			do (file, fullPath) ->
+			do (fullPath) ->
 				fs.stat fullPath, (err, stats) ->
 					if err?
 						callback err
