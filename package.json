@@ -1,29 +1,29 @@
 {
-	"name": "cardplay",
-	"version": "0.0.0",
-	"description": "Card-battling and scripting, now with 90% more JS/CS!",
-	"main": "lib/main.js",
-	"scripts": {
-		"cstart": "coffee index.coffee"
-	},
-	"keywords": [
-		"card",
-		"game",
-		"battle",
-		"scripting"
-	],
-	"author": "Raymond H.",
-	"license": "BSD-2-Clause",
-	"devDependencies": {
-		"grunt": "~0.4.2",
-		"grunt-contrib-coffee": "~0.8.2",
-		"grunt-coffeelint": "0.0.8",
-		"grunt-contrib-watch": "~0.5.3"
-	},
-	"dependencies": {
-		"irc": "~0.3.6",
-		"underscore": "~1.5.2",
-		"underscore.string": "~2.3.3",
-		"coffee-script": "~1.6.3"
-	}
+  "name": "cardplay",
+  "version": "0.0.0",
+  "description": "Card-battling and scripting, now with 90% more JS/CS!",
+  "main": "lib/main.js",
+  "scripts": {
+    "cstart": "coffee index.coffee"
+  },
+  "keywords": [
+    "card",
+    "game",
+    "battle",
+    "scripting"
+  ],
+  "author": "Raymond H.",
+  "license": "BSD-2-Clause",
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-coffee": "~0.8.2",
+    "grunt-coffeelint": "0.0.8",
+    "grunt-contrib-watch": "~0.5.3"
+  },
+  "dependencies": {
+    "irc": "~0.3.6",
+    "underscore": "~1.5.2",
+    "underscore.string": "~2.3.3",
+    "coffee-script": "~1.7.0"
+  }
 }
