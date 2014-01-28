@@ -1,8 +1,8 @@
 path = require 'path'
 fs = require 'fs'
-_ = require 'underscore'
-_.str = require 'underscore.string'
 CoffeeScript = require 'coffee-script'
+
+fileUtils = require './file-utils'
 
 getJsSource = (file) ->
 	file = path.resolve file
@@ -18,39 +18,6 @@ getJsSource = (file) ->
 				return CoffeeScript.compile contents, filename: file
 			catch e
 				console.error e.stack
-
-walkFolder = (folder, callback, done) ->
-	fs.readdir folder, (err, files) ->
-		if err?
-			callback err
-			done()
-			return
-
-		if files.length is 0
-			done?()
-			return
-
-		finish = _.after files.length, ->
-			done?()
-
-		for file in files
-			fullPath = path.resolve folder, file
-
-			do (finish, fullPath) ->
-				fs.stat fullPath, (err, stats) ->
-					if err?
-						callback err
-						finish()
-						return
-
-					if stats.isDirectory()
-						walkFolder fullPath, callback, finish
-
-					else if stats.isFile()
-						callback null, fullPath
-						finish()
-
-					else finish()
 
 loadScript = (file, callback) ->
 	file = path.resolve file
@@ -72,7 +39,7 @@ runScript = (code, file, callback) ->
 	readyCallback -> { on: -> }
 
 exports.load = (folder, callback) ->
-	walkFolder folder, (err, file) ->
+	fileUtils.walkFolder folder, (err, file) ->
 		if err? then console.error err.stack
 
 		# console.log "Got file #{file} with extension #{path.extname file}"
