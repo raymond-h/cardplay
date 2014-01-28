@@ -44,6 +44,7 @@ runScript = (code, file, callback) ->
 	vm.runInNewContext code, sandbox, file
 
 	readyCallback (type, config) ->
+		if not config? then [config, type] = [type, type.type]
 		new Card type, config
 
 exports.load = (folder, callback) ->
