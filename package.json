@@ -2,7 +2,7 @@
   "name": "cardplay",
   "version": "0.0.0",
   "description": "Card-battling and scripting, now with 90% more JS/CS!",
-  "main": "index.js",
+  "main": "lib/main.js",
   "scripts": {
     "start": "coffee index.coffee"
   },
