@@ -43,9 +43,14 @@ runScript = (code, file, callback) ->
 
 	vm.runInNewContext code, sandbox, file
 
+	cards = []
+
 	readyCallback (type, config) ->
 		if not config? then [config, type] = [type, type.type]
-		new Card type, config
+		cards.push (c = new Card type, config)
+		return c
+
+	console.log "Added", cards
 
 exports.load = (folder, callback) ->
 	fileUtils.walkFolder folder, (err, file) ->
