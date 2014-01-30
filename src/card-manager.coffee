@@ -22,7 +22,7 @@ getJsSource = (file) ->
 				console.error e.stack
 
 class Card extends EventEmitter
-	constructor: (@type, config) ->
+	constructor: (config) ->
 		_.extend @, config
 
 loadScript = (file, callback) ->
@@ -46,8 +46,9 @@ runScript = (code, file, callback) ->
 	cards = []
 
 	readyCallback (type, config) ->
-		if not config? then [config, type] = [type, type.type]
-		cards.push (c = new Card type, config)
+		if typeof type is 'string' and config? then config.type = type 
+
+		cards.push (c = new Card config)
 		return c
 
 	console.log "Added", cards
