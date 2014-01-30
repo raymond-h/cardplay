@@ -15,8 +15,6 @@ getJsSource = (file) ->
 		when '.js' then return contents
 
 		when '.coffee', '.lit-coffee', '.coffee.md'
-			console.log "Compiling Coffeescript file..."
-
 			try
 				return CoffeeScript.compile contents, filename: file
 			catch e
