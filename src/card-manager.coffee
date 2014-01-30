@@ -1,10 +1,11 @@
-path           = require 'path'
-fs             = require 'fs'
-_              = require 'underscore'
-CoffeeScript   = require 'coffee-script'
-{EventEmitter} = require 'events'
-
-fileUtils      = require './file-utils'
+path = require 'path'
+fs = require 'fs'
+_ = require 'underscore'
+CoffeeScript = require 'coffee-script'
+               
+fileUtils = require './file-utils'
+game = require './game'
+{Card} = game
 
 getJsSource = (file) ->
 	file = path.resolve file
@@ -20,10 +21,6 @@ getJsSource = (file) ->
 				return CoffeeScript.compile contents, filename: file
 			catch e
 				console.error e.stack
-
-class Card extends EventEmitter
-	constructor: (config) ->
-		_.extend @, config
 
 loadScript = (file, callback) ->
 	file = path.resolve file
@@ -46,7 +43,7 @@ runScript = (code, file, callback) ->
 	cards = []
 
 	readyCallback (type, config) ->
-		if typeof type is 'string' and config? then config.type = type 
+		if typeof type is 'string' and config? then config.type = type
 
 		cards.push (c = new Card config)
 		return c
