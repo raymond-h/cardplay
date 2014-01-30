@@ -1,10 +1,10 @@
-path = require 'path'
-fs = require 'fs'
-_ = require 'underscore'
-CoffeeScript = require 'coffee-script'
+path           = require 'path'
+fs             = require 'fs'
+_              = require 'underscore'
+CoffeeScript   = require 'coffee-script'
 {EventEmitter} = require 'events'
 
-fileUtils = require './file-utils'
+fileUtils      = require './file-utils'
 
 getJsSource = (file) ->
 	file = path.resolve file
