@@ -11,7 +11,4 @@ class Card extends EventEmitter
 	constructor: (config) ->
 		_.extend @, config
 
-exports.Card = Card
-exports.Session = Session
-exports.Field = Field
-exports.Player = Player
+module.exports = {Session, Field, Card, Player}
