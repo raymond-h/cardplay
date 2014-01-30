@@ -23,6 +23,7 @@
   "dependencies": {
     "underscore": "~1.5.2",
     "underscore.string": "~2.3.3",
-    "coffee-script": "~1.7.0"
+    "coffee-script": "~1.7.0",
+    "routes": "~0.2.0"
   }
 }
