@@ -1,3 +1,9 @@
 class UserStorage
 
-module.exports = -> # This should be a ref. to a class impl. UserStorage
+NedbDatastore = require 'nedb'
+
+class NedbUserStorage extends UserStorage
+	constructor: (path) ->
+		@db = new NedbDatastore filename: path, autoload: true
+
+module.exports = NedbUserStorage
