@@ -24,7 +24,7 @@ loadScript = (file, callback) ->
 	file = path.resolve file
 	source = getJsSource file
 
-	runScript source, file, -> callback()
+	runScript source, file, callback
 
 runScript = (code, file, callback) ->
 	vm = require 'vm'
@@ -46,6 +46,8 @@ runScript = (code, file, callback) ->
 		return c
 
 	console.log "Added", cards
+
+	callback null, cards
 
 exports.load = (folder, callback) ->
 	fileUtils.walkFolder folder, (err, file) ->
