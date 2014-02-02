@@ -1,7 +1,6 @@
 http = require 'http'
 net = require 'net'
 url = require 'url'
-Router = require 'routes'
 
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
