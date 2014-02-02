@@ -1,24 +1,26 @@
 http = require 'http'
+net = require 'net'
 url = require 'url'
 Router = require 'routes'
 
 CardManager = require './card-manager'
+sendUtils = require './send-utils'
 
 CardManager.load './cards'
 
-router = Router()
+net.createServer (socket) ->
+	buffer = ""
+	dataLengthNeeded = -1
 
-http.createServer (req, res) ->
-	urlParts = url.parse req.url, true
+	socket.on 'data', (data) ->
+		buffer += data.toString()
 
-	match = router.match urlParts.pathname
-	match.fn req, res, urlParts, match if match?
+		while ([data, startOfNext] = sendUtils.parseSendableJson buffer; data?)
+			buffer = buffer.substring startOfNext
 
-.listen 80
+			socket.emit 'json-data', data
 
-router.addRoute '/test', (req, res, url, route) ->
-	console.log "Got a test request"
+	socket.on 'json-data', (data) ->
+		console.log "Got data", data
 
-	res.writeHead 200
-	res.write "Testing does work!"
-	res.end()
+.listen 6214
