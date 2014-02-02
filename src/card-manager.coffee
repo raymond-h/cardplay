@@ -29,7 +29,6 @@ loadScript = (file, callback) ->
 runScript = (code, file, callback) ->
 	vm = require 'vm'
 
-	prereqs = []
 	readyCallback = ->
 
 	sandbox =
