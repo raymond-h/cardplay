@@ -3,6 +3,7 @@ module.exports = (grunt) ->
 	grunt.task.loadNpmTasks 'grunt-contrib-coffee'
 	grunt.task.loadNpmTasks 'grunt-coffeelint'
 	grunt.task.loadNpmTasks 'grunt-contrib-watch'
+	grunt.task.loadNpmTasks 'grunt-mocha-test'
 
 	grunt.initConfig
 		pkg: grunt.file.readJSON 'package.json'
@@ -22,14 +23,23 @@ module.exports = (grunt) ->
 				no_tabs: level: 'ignore'
 				indentation: level: 'ignore'
 
+		mochaTest:
+			test:
+				options:
+					reporter: 'spec'
+					require: ['coffee-script/register']
+
+				src: ['test/**/*.coffee']
+
 		watch:
 			lint:
 				files: ['src/*.coffee']
-				tasks: ['lint']
+				tasks: ['lint', 'test']
 
 	grunt.registerTask 'default', ["build"]
 
-	grunt.registerTask 'build', ['coffeelint:build', 'coffee:build']
+	grunt.registerTask 'build', ['lint', 'test', 'coffee:build']
 	grunt.registerTask 'lint', ['coffeelint:build']
+	grunt.registerTask 'test', ['mochaTest:test']
 
 	grunt.registerTask 'dev', ['watch:lint']
