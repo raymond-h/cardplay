@@ -6,6 +6,8 @@ url = require 'url'
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
 
+recvdEvents = new EventEmitter()
+
 CardManager.load './cards', ->
 
 	net.createServer (socket) ->
@@ -20,7 +22,14 @@ CardManager.load './cards', ->
 
 				socket.emit 'json-data', data
 
-		socket.on 'json-data', (data) ->
-			console.log "Got data", data
+		socket.on 'json-data', (data) -> recvdEvents.emit data.type, socket, data
 
 	.listen 6214
+
+recvdEvents.on 'register', (socket, data) ->
+	{username, password} = data
+
+	console.log "Registering user #{username} with password #{password}"
+
+recvdEvents.on 'login', (socket, data) ->
+	{username, password} = data
