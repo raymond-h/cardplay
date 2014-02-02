@@ -47,7 +47,7 @@ runScript = (code, file, callback) ->
 
 	console.log "Added", cards
 
-	callback null, cards
+	callback? null, cards
 
 exports.load = (folder, callback) ->
 	fileUtils.walkFolder folder, (err, file) ->
