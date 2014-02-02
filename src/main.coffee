@@ -1,6 +1,7 @@
 http = require 'http'
 net = require 'net'
 url = require 'url'
+{EventEmitter} = require 'events'
 
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
