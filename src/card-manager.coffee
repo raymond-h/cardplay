@@ -51,7 +51,9 @@ runScript = (code, file, callback) ->
 
 exports.load = (folder, callback) ->
 	fileUtils.walkFolder folder, (err, file) ->
-		if err? then console.error err.stack
+		if err?
+			console.error err.stack
+			return
 
 		# console.log "Got file #{file} with extension #{path.extname file}"
 		if (path.extname file) in ['.js', '.coffee', '.lit-coffee', '.coffee.md']
