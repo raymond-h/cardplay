@@ -24,3 +24,17 @@ exports.parseSendableJson = (data, delim = exports.delim) ->
 	catch e
 		console.log e.stack
 		return []
+
+exports.extendSocket = (socket) ->
+	buffer = ""
+	dataLengthNeeded = -1
+
+	socket.on 'data', (data) ->
+		buffer += data.toString()
+
+		while ([data, startOfNext] = exports.parseSendableJson buffer; data?)
+			buffer = buffer.substring startOfNext
+
+			socket.emit 'json-data', data
+
+	socket.writeJson = (json) -> socket.write exports.sendableJson json
