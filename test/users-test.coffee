@@ -14,22 +14,15 @@ describe 'UserStorage', ->
 	before ->
 		db = new UserStorage('test-tmp/user-test.db')
 
-	beforeEach (done) ->
-		db.db.remove {}, done
+	# beforeEach (done) ->
+	# 	db.db.remove {}, done
 
 	after (done) ->
 		db.close()
 		rimraf 'test-tmp', done
 
 	describe '.register()', ->
-		it 'should add users with valid username and password', (done) ->
-			Q.fcall -> Q.ninvoke db, 'register', 'kayarr', 'boat'
-
-			.then (user) ->
-				expect(user).to.have.property('username').that.equals 'kayarr'
-				expect(user).to.have.property('password').that.equals 'boat'
-
-			.nodeify done
+		it 'should add users with valid username and password'
 
 		it 'should return an error if given an invalid username'
 
