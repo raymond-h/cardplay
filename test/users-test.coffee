@@ -25,8 +25,6 @@ describe 'UserStorage', ->
 		it 'should add users with valid username and password', (done) ->
 			Q.fcall -> Q.ninvoke db, 'register', 'kayarr', 'boat'
 
-			.then -> Q.ninvoke db.db, 'findOne', { username: 'kayarr' }
-
 			.then (userdata) ->
 				expect(userdata).to.have.property('username').that.equals 'kayarr'
 				expect(userdata).to.have.property('password').that.equals 'boat'
@@ -36,6 +34,6 @@ describe 'UserStorage', ->
 		it 'should reject users with invalid username'
 
 	describe '.login()', ->
-		it 'should return true if the username exists and the password is correct'
+		it 'should mark user as logged in and return the user if username and password are correct'
 
-		it 'should signal if the username does not exist or the password is wrong'
+		it 'should return an error and no user if the username does not exist or the password is wrong'
