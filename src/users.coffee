@@ -1,13 +1,6 @@
-class UserStorage
-	register: (username, password, callback) -> callback null
-
-	login: (username, password, callback) -> callback null
-
-	close: ->
-
 NedbDatastore = require 'nedb'
 
-class NedbUserStorage extends UserStorage
+class UserStorage
 	constructor: (path) ->
 		@db = new NedbDatastore filename: path, autoload: true
 
@@ -19,4 +12,4 @@ class NedbUserStorage extends UserStorage
 
 	close: ->
 
-module.exports = NedbUserStorage
+module.exports = UserStorage
