@@ -25,9 +25,9 @@ describe 'UserStorage', ->
 		it 'should add users with valid username and password', (done) ->
 			Q.fcall -> Q.ninvoke db, 'register', 'kayarr', 'boat'
 
-			.then (userdata) ->
-				expect(userdata).to.have.property('username').that.equals 'kayarr'
-				expect(userdata).to.have.property('password').that.equals 'boat'
+			.then (user) ->
+				expect(user).to.have.property('username').that.equals 'kayarr'
+				expect(user).to.have.property('password').that.equals 'boat'
 
 			.nodeify done
 
