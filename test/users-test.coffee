@@ -14,19 +14,74 @@ describe 'UserStorage', ->
 	before ->
 		db = new UserStorage('test-tmp/user-test.db')
 
-	# beforeEach (done) ->
-	# 	db.db.remove {}, done
+	beforeEach (done) ->
+		db.loggedInUsers = []
+		db.clear done
 
 	after (done) ->
 		db.close()
 		rimraf 'test-tmp', done
 
-	describe '.register()', ->
-		it 'should add users with valid username and password'
+	describe '.validateUsername()', ->
+		it 'should allow usernames with only alphabetical symbols and/or _-', ->
+			db.validateUsername('kay_arr-two').should.be.true
 
-		it 'should return an error if given an invalid username'
+		it 'should disallow usernames with other symbols', ->
+			db.validateUsername('WOAHBRO()').should.be.false
+			db.validateUsername('Num5658465').should.be.false
+
+		it 'should disallow an empty username', ->
+			db.validateUsername('').should.be.false
+
+	describe '.register()', ->
+		it 'should add users with valid username and password', (done) ->
+			Q.ninvoke db, 'register', 'kayarr', 'boat'
+
+			.then (user) ->
+				expect(user).to.exist
+				user.should.have.property 'username', 'kayarr'
+				user.should.have.property 'password', 'boat'
+
+			.then -> Q.ninvoke db, 'get', 'kayarr'
+
+			.then (user) ->
+				expect(user).to.exist
+				user.should.have.property 'username', 'kayarr'
+				user.should.have.property 'password', 'boat'
+
+			.nodeify done
+
+		it 'should return an error if given an invalid username', (done) ->
+			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah', (err, user) ->
+				expect(err).to.exist.and.be.an.instanceof UserStorage.Error
+				err.message.should.equal "Invalid username 'U#(YTU =¤WITWYHUOcrazy'"
+				expect(user).to.not.exist
+				done()
 
 	describe '.login()', ->
-		it 'should mark user as logged in and return the user if username and password are correct'
+		it 'should mark user as logged in if username and password are correct', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				if err? then throw err
 
-		it 'should return an error and no user if the username does not exist or the password is wrong'
+				db.login 'kayarr', 'boat', (err, user) ->
+					expect(err).to.not.exist
+					expect(user).to.exist
+
+					user.should.deep.equal { username: 'kayarr', password: 'boat' }
+
+					db.loggedInUsers.should.contain 'kayarr'
+
+					done()
+
+		it 'should return an error if the username does not exist or the password is wrong', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				if err? then throw err
+
+				db.login 'kayarr', 'woah', (err, user) ->
+					expect(err).to.exist.and.be.instanceof UserStorage.Error
+					err.message.should.equal 'Invalid username or password'
+					expect(user).to.not.exist
+
+					db.loggedInUsers.should.not.contain 'kayarr'
+
+					done()
