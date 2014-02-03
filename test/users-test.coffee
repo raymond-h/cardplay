@@ -31,7 +31,7 @@ describe 'UserStorage', ->
 
 			.nodeify done
 
-		it 'should reject users with invalid username'
+		it 'should return an error if given an invalid username'
 
 	describe '.login()', ->
 		it 'should mark user as logged in and return the user if username and password are correct'
