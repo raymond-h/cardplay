@@ -18,7 +18,7 @@ describe 'UserStorage', ->
 		db.db.remove {}, done
 
 	after (done) ->
-		# close db
+		db.close()
 		rimraf 'test-tmp', done
 
 	describe '.register()', ->
