@@ -14,7 +14,8 @@ class NedbUserStorage extends UserStorage
 	register: (username, password, callback) ->
 		@db.insert { username, password }, callback
 
-	login: (username, password, callback) -> callback null
+	login: (username, password, callback) ->
+		callback null
 
 	close: ->
 
