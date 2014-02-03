@@ -3,6 +3,10 @@ class UserStorage
 
 	login: (username, password, callback) -> callback null
 
+	get: (username, callback) -> callback null
+
+	clear: (callback) -> callback null
+
 	close: ->
 
 NedbDatastore = require 'nedb'
@@ -15,5 +19,11 @@ class NedbUserStorage extends UserStorage
 		@db.insert { username, password }, callback
 
 	login: (username, password, callback) -> callback null
+
+	get: (username, callback) ->
+		@db.findOne { username }, callback
+
+	clear: (callback) ->
+		@db.remove {}, callback
 
 module.exports = NedbUserStorage

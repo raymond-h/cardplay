@@ -15,7 +15,7 @@ describe 'UserStorage', ->
 		db = new UserStorage('test-tmp/user-test.db')
 
 	beforeEach (done) ->
-		db.db.remove {}, done
+		db.clear done
 
 	after (done) ->
 		# close db
@@ -25,7 +25,7 @@ describe 'UserStorage', ->
 		it 'should add users with valid username and password', (done) ->
 			Q.fcall -> Q.ninvoke db, 'register', 'kayarr', 'boat'
 
-			.then -> Q.ninvoke db.db, 'findOne', {}
+			.then -> Q.ninvoke db, 'get', 'kayarr'
 
 			.then (userdata) ->
 				expect(userdata).to.have.property('username').that.equals 'kayarr'
