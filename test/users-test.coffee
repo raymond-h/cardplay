@@ -53,10 +53,12 @@ describe 'UserStorage', ->
 
 		it 'should return an error if given an invalid username', (done) ->
 			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah', (err, user) ->
-				expect(err).to.exist.and.be.an.instanceof UserStorage.Error
+				expect(err).to.exist.and.be.an.instanceof Error
 				err.message.should.equal "Invalid username 'U#(YTU =¤WITWYHUOcrazy'"
 				expect(user).to.not.exist
 				done()
+
+		it 'should return an error if a username is already taken'
 
 	describe '.login()', ->
 		it 'should mark user as logged in if username and password are correct', (done) ->
@@ -73,15 +75,28 @@ describe 'UserStorage', ->
 
 					done()
 
-		it 'should return an error if the username does not exist or the password is wrong', (done) ->
+		it 'should return an error if the password is wrong', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				if err? then throw err
 
 				db.login 'kayarr', 'woah', (err, user) ->
-					expect(err).to.exist.and.be.instanceof UserStorage.Error
+					expect(err).to.exist.and.be.instanceof Error
 					err.message.should.equal 'Invalid username or password'
 					expect(user).to.not.exist
 
 					db.loggedInUsers.should.not.contain 'kayarr'
+
+					done()
+
+		it 'should return an error if given a nonexistant user', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				if err? then throw err
+
+				db.login 'woot', 'boat', (err, user) ->
+					expect(err).to.exist.and.be.instanceof Error
+					err.message.should.equal 'Invalid username or password'
+					expect(user).to.not.exist
+
+					db.loggedInUsers.should.not.contain ['kayarr', 'woot']
 
 					done()

@@ -20,7 +20,8 @@ class UserStorage
 		# callback: (err, user)
 
 		if not @validateUsername username
-			callback new UserStorageError "Invalid username '#{username}'", 'invalid-username'
+			callback new UserStorageError "Invalid username '#{username}'",
+				'invalid-username'
 		
 		else @db.insert { username, password }, callback
 
@@ -30,12 +31,13 @@ class UserStorage
 		@get username, (err, user) =>
 			if err? then callback err; return
 
-			if user.password is password
-				@loggedInUsers.push username
+			if user? and user.password is password
+				@loggedInUsers.push username if not (username in @loggedInUsers)
 				callback null, { username, password }
 
 			else
-				callback new UserStorageError 'Invalid username or password', 'username-password-invalid'
+				callback new UserStorageError 'Invalid username or password',
+					'username-password-invalid'
 
 	get: (username, callback) ->
 		# callback: (err, user)
