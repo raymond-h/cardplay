@@ -61,7 +61,7 @@ describe 'UserStorage', ->
 
 		it 'should return an error if a username is already taken', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
-				if err? then throw err
+				return done err if err?
 
 				db.register 'kayarr', 'boat', (err, user) ->
 					expect(err).to.exist.and.be.instanceof Error
@@ -74,7 +74,7 @@ describe 'UserStorage', ->
 	describe '.login()', ->
 		it 'should mark user as logged in if username and password are correct', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
-				if err? then throw err
+				return done err if err?
 
 				db.login 'kayarr', 'boat', (err, user) ->
 					expect(err).to.not.exist
@@ -88,7 +88,7 @@ describe 'UserStorage', ->
 
 		it 'should return an error if the password is wrong', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
-				if err? then throw err
+				return done err if err?
 
 				db.login 'kayarr', 'woah', (err, user) ->
 					expect(err).to.exist.and.be.instanceof Error
@@ -102,7 +102,7 @@ describe 'UserStorage', ->
 
 		it 'should return an error if given a nonexistant user', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
-				if err? then throw err
+				return done err if err?
 
 				db.login 'woot', 'boat', (err, user) ->
 					expect(err).to.exist.and.be.instanceof Error

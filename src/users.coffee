@@ -24,8 +24,9 @@ class UserStorage
 				'invalid-username'
 		
 		else @db.count { username }, (err, count) =>
-			if err? then callback err
-			else if count > 0
+			return callback err if err?
+			
+			if count > 0
 				callback new UserStorageError "Username '#{username}' is already taken",
 					'username-taken'
 
@@ -35,7 +36,7 @@ class UserStorage
 		# callback: (err, user)
 
 		@get username, (err, user) =>
-			if err? then callback err; return
+			return callback err if err?
 
 			if user? and user.password is password
 				@loggedInUsers.push username if not (username in @loggedInUsers)
