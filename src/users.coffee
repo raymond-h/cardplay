@@ -23,7 +23,13 @@ class UserStorage
 			callback new UserStorageError "Invalid username '#{username}'",
 				'invalid-username'
 		
-		else @db.insert { username, password }, callback
+		else @db.count { username }, (err, count) =>
+			if err? then callback err
+			else if count > 0
+				callback new UserStorageError "Username '#{username}' is already taken",
+					'username-taken'
+
+			else @db.insert { username, password }, callback
 
 	login: (username, password, callback) ->
 		# callback: (err, user)
