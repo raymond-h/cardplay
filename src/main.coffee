@@ -24,7 +24,7 @@ CardManager.load './cards', ->
 			if username?
 				console.log "Logging out #{username}"
 				i = usernameSockets[username].indexOf socket
-				usernameSockets[username][i..i] = []
+				usernameSockets[username][i..i] = [] if ~i
 
 	.listen 6214
 
