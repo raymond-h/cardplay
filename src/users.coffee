@@ -30,7 +30,7 @@ class UserStorage
 				callback new UserStorageError "Username '#{username}' is already taken",
 					'username-taken'
 
-			else @db.insert { username, password }, callback
+			else @db.insert { username, password, challenges: [] }, callback
 
 	login: (username, password, callback) ->
 		# callback: (err, user)
