@@ -51,7 +51,7 @@ class UserStorage
 
 		if username in @loggedInUsers then callback null, true
 
-		else @db.count { username }, (err, count) =>
+		else @db.count { username }, (err, count) ->
 			return callback err if err?
 
 			if count is 0
