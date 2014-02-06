@@ -3,11 +3,14 @@ net = require 'net'
 url = require 'url'
 {EventEmitter} = require 'events'
 
+Datastore = require 'nedb'
+
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
 UserStorage = require './users'
 
-userStorage = new UserStorage()
+userDb = new Datastore()
+userStorage = new UserStorage userDb
 
 usernameSockets = {}
 

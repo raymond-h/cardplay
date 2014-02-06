@@ -6,13 +6,15 @@ chai.should()
 fs = require 'fs'
 Q = require 'q'
 rimraf = require 'rimraf'
+Datastore = require 'nedb'
 
 describe 'UserStorage', ->
 	UserStorage = require '../src/users'
 	db = null
 
 	before ->
-		db = new UserStorage('test-tmp/user-test.db')
+		userDb = new Datastore()
+		db = new UserStorage userDb
 
 	beforeEach (done) ->
 		db.loggedInUsers = []

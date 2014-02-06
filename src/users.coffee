@@ -5,9 +5,7 @@ class UserStorageError extends Error
 		super message
 
 class UserStorage
-	constructor: (path) ->
-		@db = new NedbDatastore filename: path, autoload: true
-
+	constructor: (@db) ->
 		@loggedInUsers = []
 
 	validateUsername: (username) ->
