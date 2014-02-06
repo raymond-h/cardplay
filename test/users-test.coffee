@@ -113,16 +113,3 @@ describe 'UserStorage', ->
 					db.loggedInUsers.should.not.contain ['kayarr', 'woot']
 
 					done()
-
-	describe '.getChallenges()', ->
-		it 'should return an empty array for users without challenges', (done) ->
-			db.register 'kayarr', 'boat', (err, user) ->
-				return done err if err?
-				db.login 'kayarr', 'boat', (err, user) ->
-					return done err if err?
-
-					db.getChallenges 'kayarr', (err, challenges) ->
-						expect(err).to.not.exist
-						expect(challenges).to.be.an('array').with.length 0
-
-						done()

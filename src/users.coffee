@@ -27,7 +27,7 @@ class UserStorage
 				callback new UserStorageError "Username '#{username}' is already taken",
 					'username-taken'
 
-			else @db.insert { username, password, challenges: [] }, callback
+			else @db.insert { username, password }, callback
 
 	login: (username, password, callback) ->
 		# callback: (err, user)
@@ -42,12 +42,6 @@ class UserStorage
 			else
 				callback new UserStorageError 'Invalid username or password',
 					'username-password-invalid'
-
-	getChallenges: (username, callback) ->
-		# callback: (err, challenges)
-
-		@db.findOne { username }, (err, data) ->
-			if err? then callback err else callback null, data.challenges
 
 	get: (username, callback) ->
 		# callback: (err, user)
