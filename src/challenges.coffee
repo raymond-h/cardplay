@@ -1,9 +1,7 @@
-NedbDatastore = require 'nedb'
 _ = require 'underscore'
 
 class ChallengeStorage
-	constructor: (path) ->
-		@db = new NedbDatastore filename: path, autoload: true
+	constructor: (@db) ->
 
 	getForUser: (username, callback) ->
 		@db.find $or: [ (sender: username), (receiver: username) ], (err, rows) ->

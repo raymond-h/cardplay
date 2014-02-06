@@ -3,12 +3,15 @@ chai = require 'chai'
 {expect} = chai
 chai.should()
 
+Datastore = require 'nedb'
+
 describe 'ChallengeStorage', ->
 	ChallengeStorage = require '../src/challenges'
 	db = null
 
 	before ->
-		db = new ChallengeStorage('test-tmp/user-test.db')
+		challengeDb = new Datastore()
+		db = new ChallengeStorage challengeDb
 
 	after (done) ->
 		rimraf 'test-tmp', done
