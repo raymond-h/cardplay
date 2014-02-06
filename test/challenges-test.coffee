@@ -13,7 +13,4 @@ describe 'ChallengeStorage', ->
 		challengeDb = new Datastore()
 		db = new ChallengeStorage challengeDb
 
-	after (done) ->
-		rimraf 'test-tmp', done
-
 	describe '.getForUser()', ->

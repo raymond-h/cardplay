@@ -20,10 +20,6 @@ describe 'UserStorage', ->
 		db.loggedInUsers = []
 		db.clear done
 
-	after (done) ->
-		db.close()
-		rimraf 'test-tmp', done
-
 	describe '.validateUsername()', ->
 		it 'should allow usernames with only alphabetical symbols and/or _-', ->
 			db.validateUsername('kay_arr-two').should.be.true
