@@ -46,6 +46,20 @@ class UserStorage
 
 		@db.findOne { username }, callback
 
+	isLoggedIn: (username, callback) ->
+		# callback: (err, loggedIn)
+
+		if username in @loggedInUsers then callback null, true
+
+		else @db.count { username }, (err, count) =>
+			return callback err if err?
+
+			if count is 0
+				callback new UserStorageError "Username '#{username}' does not exist",
+					'invalid-username'
+
+			else callback null, false
+
 	clear: (callback) ->
 		@db.remove {}, callback
 

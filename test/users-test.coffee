@@ -10,6 +10,7 @@ Datastore = require 'nedb'
 
 describe 'UserStorage', ->
 	UserStorage = require '../src/users'
+	userDb = null
 	db = null
 
 	before ->
@@ -18,7 +19,7 @@ describe 'UserStorage', ->
 
 	beforeEach (done) ->
 		db.loggedInUsers = []
-		db.clear done
+		userDb.remove {}, done
 
 	describe '.validateUsername()', ->
 		it 'should allow usernames with only alphabetical symbols and/or _-', ->
@@ -111,3 +112,47 @@ describe 'UserStorage', ->
 					db.loggedInUsers.should.not.contain ['kayarr', 'woot']
 
 					done()
+
+	describe '.isLoggedIn()', ->
+		it 'should return false if the user is not logged in', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				return done err if err?
+
+				db.isLoggedIn 'kayarr', (err, loggedIn) ->
+					try
+						expect(err).to.not.exist
+						expect(loggedIn).to.exist
+						loggedIn.should.be.false
+
+						done()
+
+					catch e then done e
+
+		it 'should return true if the user is logged in', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				return done err if err?
+
+				db.login 'kayarr', 'boat', (err, user) ->
+					return done err if err?
+
+					db.isLoggedIn 'kayarr', (err, loggedIn) ->
+						try
+							expect(err).to.not.exist
+							expect(loggedIn).to.exist
+							loggedIn.should.be.true
+
+							done()
+
+						catch e then done e
+
+		it 'should return an error if the user does not exist', (done) ->
+			db.isLoggedIn 'kayarr', (err, loggedIn) ->
+				try
+					expect(err).to.exist.and.be.instanceof Error
+					err.code.should.equal 'invalid-username'
+					err.message.should.equal "Username 'kayarr' does not exist"
+					expect(loggedIn).to.not.exist
+
+					done()
+
+				catch e then done e
