@@ -60,9 +60,6 @@ class UserStorage
 
 			else callback null, false
 
-	clear: (callback) ->
-		@db.remove {}, callback
-
 	close: ->
 
 module.exports = UserStorage
