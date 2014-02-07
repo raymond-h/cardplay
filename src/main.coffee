@@ -101,6 +101,9 @@ CardManager.load './cards', ->
 					type: 'challenges-list'
 					challenges: challenges
 
+		else # client was not logged in
+			socket.writeJson type: 'challenges-list', errorCode: 'not-logged-in'
+
 	onReplyToChallenge = (reply, socket, data) ->
 
 		challengeStorage.getForUser socket.username, (err, challenges) ->
