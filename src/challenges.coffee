@@ -4,6 +4,8 @@ class ChallengeStorage
 	constructor: (@db) ->
 
 	getForUser: (username, callback) ->
+		# callback: (err, challenges)
+
 		@db.find $or: [ (sender: username), (receiver: username) ], (err, rows) ->
 			return callback err if err?
 
