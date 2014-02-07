@@ -100,3 +100,16 @@ CardManager.load './cards', ->
 				socket.writeJson
 					type: 'challenges-list'
 					challenges: challenges
+
+	onReplyToChallenge = (reply, socket, data) ->
+
+		challengeStorage.getForUser socket.username, (err, challenges) ->
+			[challenge, ...] = (c for c in challenges when c._id is data.challengeId)
+
+			console.log challenges
+
+			console.log "User #{socket.username} action: #{reply}:", challenge
+
+	recvdEvents
+		.on 'accept', -> onReplyToChallenge 'accept', arguments...
+		.on 'decline', -> onReplyToChallenge 'decline', arguments...
