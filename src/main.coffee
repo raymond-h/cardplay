@@ -8,11 +8,18 @@ Datastore = require 'nedb'
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
 UserStorage = require './users'
+ChallengeStorage = require './challenges'
 
 userDb = new Datastore()
 userStorage = new UserStorage userDb
 
+challengeDb = new Datastore()
+challengeStorage = new ChallengeStorage challengeDb
+
 usernameSockets = {}
+
+challengeStorage.add sender: 'kayarr', receiver: 'master', ->
+challengeStorage.add sender: 'strack', receiver: 'kayarr', ->
 
 CardManager.load './cards', ->
 
@@ -72,3 +79,24 @@ CardManager.load './cards', ->
 					type: 'login'
 					success: true
 					username: username
+
+	recvdEvents.on 'get-challenges', (socket, data) ->
+		sender = socket.username
+
+		if sender? # user is logged in
+
+			challengeStorage.getForUser sender, (err, challenges) ->
+				transform = (challenge) ->
+					sent = challenge.sender is sender
+
+					return {
+						challengeId: challenge._id
+						sent
+						username: if sent then challenge.receiver else challenge.sender
+					}
+
+				challenges = (transform c for c in challenges)
+
+				socket.writeJson
+					type: 'challenges-list'
+					challenges: challenges
