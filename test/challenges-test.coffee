@@ -14,3 +14,5 @@ describe 'ChallengeStorage', ->
 		db = new ChallengeStorage challengeDb
 
 	describe '.getForUser()', ->
+		
+	describe '.add()', ->
