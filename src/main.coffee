@@ -30,12 +30,14 @@ CardManager.load './cards', ->
 
 		socket.on 'json-data', (data) -> recvdEvents.emit data.type, socket, data
 
-		socket.on 'end', ->
+		socket.on 'close', ->
 			username = socket.username
 			if username?
 				console.log "Logging out #{username}"
 				i = usernameSockets[username].indexOf socket
 				usernameSockets[username][i..i] = [] if ~i
+				
+		socket.on 'error', (error) -> (console.error error.stack)
 
 	.listen 6214
 
