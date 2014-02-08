@@ -51,13 +51,13 @@ CardManager.load './cards', ->
 					success: false
 					username: username
 					errorCode: err.code ? 'internal-error'
+				return
 
-			else
-				# registration went fine
-				socket.writeJson
-					type: 'register'
-					success: true
-					username: username
+			# registration went fine
+			socket.writeJson
+				type: 'register'
+				success: true
+				username: username
 
 	recvdEvents.on 'login', (socket, data) ->
 		{username, password} = data
@@ -69,24 +69,26 @@ CardManager.load './cards', ->
 					success: false
 					username: username
 					errorCode: err.code ? 'internal-error'
+				return
 
-			else
-				# login went fine
-				(usernameSockets[username] ?= []).push socket
-				socket.username = username
+			# login went fine
+			(usernameSockets[username] ?= []).push socket
+			socket.username = username
 
-				console.log "Logged in #{username}"
+			console.log "Logged in #{username}"
 
-				socket.writeJson
-					type: 'login'
-					success: true
-					username: username
+			socket.writeJson
+				type: 'login'
+				success: true
+				username: username
 
 	recvdEvents.on 'get-challenges', (socket, data) ->
 		sender = socket.username
 
-		if sender? # client is logged in
+		if not sender? # client is not logged in
+			socket.writeJson type: 'challenges-list', errorCode: 'not-logged-in'
 
+		else # client is logged in
 			challengeStorage.getForUser sender, (err, challenges) ->
 				challenges = for challenge in challenges
 					sent = challenge.sender is sender
@@ -101,36 +103,32 @@ CardManager.load './cards', ->
 					type: 'challenges-list'
 					challenges: challenges
 
-		else # client was not logged in
-			socket.writeJson type: 'challenges-list', errorCode: 'not-logged-in'
-
 	recvdEvents.on 'challenge', (socket, data) ->
 		[sender, receiver] = [socket.username, data.username]
 
-		if sender? # client is logged in
-			userStorage.isRegistered receiver, (err, registered) ->
+		if not sender? # client is not logged in
+			socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'not-logged-in'
+			return
+
+		userStorage.isRegistered receiver, (err, registered) ->
+			if err?
+				console.error err.stack
+				socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
+				return
+
+			if registered
+				socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'nonexistant-username'
+				return
+
+			challengeStorage.add {sender, receiver}, (err, challenge) ->
 				if err?
 					console.error err.stack
 					socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
 					return
 
-				if registered
+				socket.writeJson type: 'challenge', username: receiver, challengeId: challenge._id, success: true
 
-					challengeStorage.add {sender, receiver}, (err, challenge) ->
-						if err?
-							console.error err.stack
-							socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
-							return
-
-						socket.writeJson type: 'challenge', username: receiver, challengeId: challenge._id, success: true
-
-						# tell receiver that they were challenged by the sender
-
-				else
-					socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'nonexistant-username'
-
-		else
-			socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'not-logged-in'
+				# tell receiver that they were challenged by the sender
 
 	onReplyToChallenge = (reply, socket, data) ->
 
