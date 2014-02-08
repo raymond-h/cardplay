@@ -37,4 +37,13 @@ exports.extendSocket = (socket) ->
 
 			socket.emit 'json-data', data
 
-	socket.writeJson = (json) -> socket.write exports.sendableJson json
+	socket.writeJson = (json) -> this.write exports.sendableJson json
+
+	socket.waitForJson = (reply, callback) ->
+		this.addListener 'json-data', handler = (data) ->
+			for k,v of reply
+				if data[k] isnt v then return
+
+			this.removeListener 'json-data', handler
+
+			callback data
