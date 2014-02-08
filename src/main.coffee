@@ -88,16 +88,14 @@ CardManager.load './cards', ->
 		if sender? # user is logged in
 
 			challengeStorage.getForUser sender, (err, challenges) ->
-				transform = (challenge) ->
+				challenges = for challenge in challenges
 					sent = challenge.sender is sender
 
-					return {
+					{
 						challengeId: challenge._id
 						sent
 						username: if sent then challenge.receiver else challenge.sender
 					}
-
-				challenges = (transform c for c in challenges)
 
 				socket.writeJson
 					type: 'challenges-list'
