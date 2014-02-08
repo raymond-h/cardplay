@@ -85,7 +85,7 @@ CardManager.load './cards', ->
 	recvdEvents.on 'get-challenges', (socket, data) ->
 		sender = socket.username
 
-		if sender? # user is logged in
+		if sender? # client is logged in
 
 			challengeStorage.getForUser sender, (err, challenges) ->
 				challenges = for challenge in challenges
@@ -103,6 +103,23 @@ CardManager.load './cards', ->
 
 		else # client was not logged in
 			socket.writeJson type: 'challenges-list', errorCode: 'not-logged-in'
+
+	recvdEvents.on 'challenge', (socket, data) ->
+		[sender, receiver] = [socket.username, data.username]
+
+		if sender? # client is logged in
+			challengeStorage.add {sender, receiver}, (err, challenge) ->
+				if err?
+					console.error err.stack
+					socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
+					return
+				
+				socket.writeJson type: 'challenge', username: receiver, success: true
+
+				# tell receiver that they were challenged by the sender
+
+		else
+			socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'not-logged-in'
 
 	onReplyToChallenge = (reply, socket, data) ->
 
