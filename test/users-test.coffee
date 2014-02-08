@@ -113,6 +113,32 @@ describe 'UserStorage', ->
 
 					done()
 
+	describe '.isRegistered()', ->
+		it 'should return true if the user name exists', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				return done err if err?
+
+				db.isRegistered 'kayarr', (err, registered) ->
+					try
+						expect(err).to.not.exist
+						expect(registered).to.exist
+						registered.should.be.true
+
+						done()
+
+					catch e then done e
+
+		it 'should return false if the user name does not exist', (done) ->
+			db.isRegistered 'kayarr', (err, registered) ->
+				try
+					expect(err).to.not.exist
+					expect(registered).to.exist
+					registered.should.be.false
+
+					done()
+
+				catch e then done e
+
 	describe '.isLoggedIn()', ->
 		it 'should return false if the user is not logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->

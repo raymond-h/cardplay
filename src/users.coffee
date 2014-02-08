@@ -46,6 +46,14 @@ class UserStorage
 
 		@db.findOne { username }, callback
 
+	isRegistered: (username, callback) ->
+		# callback: (err, registered)
+
+		@db.count { username }, (err, count) ->
+			if err? then callback err
+
+			else callback null, (count > 0)
+
 	isLoggedIn: (username, callback) ->
 		# callback: (err, loggedIn)
 
