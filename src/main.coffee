@@ -108,15 +108,26 @@ CardManager.load './cards', ->
 		[sender, receiver] = [socket.username, data.username]
 
 		if sender? # client is logged in
-			challengeStorage.add {sender, receiver}, (err, challenge) ->
+			userStorage.isRegistered receiver, (err, registered) ->
 				if err?
 					console.error err.stack
 					socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
 					return
-				
-				socket.writeJson type: 'challenge', username: receiver, success: true
 
-				# tell receiver that they were challenged by the sender
+				if registered
+
+					challengeStorage.add {sender, receiver}, (err, challenge) ->
+						if err?
+							console.error err.stack
+							socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'internal-error'
+							return
+
+						socket.writeJson type: 'challenge', username: receiver, challengeId: challenge._id, success: true
+
+						# tell receiver that they were challenged by the sender
+
+				else
+					socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'nonexistant-username'
 
 		else
 			socket.writeJson type: 'challenge', username: receiver, success: false, errorCode: 'not-logged-in'
