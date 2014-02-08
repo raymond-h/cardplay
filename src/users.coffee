@@ -18,10 +18,10 @@ class UserStorage
 			callback new UserStorageError "Invalid username '#{username}'",
 				'invalid-username'
 		
-		else @db.count { username }, (err, count) =>
+		else @isRegistered username, (err, registered) =>
 			return callback err if err?
 			
-			if count > 0
+			if registered
 				callback new UserStorageError "Username '#{username}' is already taken",
 					'username-taken'
 
@@ -59,10 +59,10 @@ class UserStorage
 
 		if username in @loggedInUsers then callback null, true
 
-		else @db.count { username }, (err, count) ->
+		else @isRegistered username, (err, registered) ->
 			return callback err if err?
 
-			if count is 0
+			if not registered
 				callback new UserStorageError "Username '#{username}' does not exist",
 					'invalid-username'
 
