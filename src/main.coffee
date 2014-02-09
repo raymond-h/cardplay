@@ -18,6 +18,10 @@ challengeStorage = new ChallengeStorage challengeDb
 
 usernameSockets = {}
 
+userStorage.register 'kayarr', 'boat', (err, user) ->
+userStorage.register 'master', 'boat', (err, user) ->
+userStorage.register 'strack', 'boat', (err, user) ->
+
 challengeStorage.add sender: 'kayarr', receiver: 'master', ->
 challengeStorage.add sender: 'strack', receiver: 'kayarr', ->
 
