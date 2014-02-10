@@ -117,10 +117,10 @@ handleJsonData = (socket, data) ->
 
 			.then (challenge) ->
 				socket.writeJson
-					type: 'challenge',
-					username: receiver,
+					type: 'challenge'
+					username: receiver
 					success: true
-					challengeId: challenge._id,
+					challengeId: challenge._id
 
 				# tell receiver that they were challenged by the sender
 
@@ -128,9 +128,9 @@ handleJsonData = (socket, data) ->
 				console.error socket.username ? socket.remoteAddress, err.stack ? err
 
 				socket.writeJson
-					type: 'challenge',
-					username: receiver,
-					success: false,
+					type: 'challenge'
+					username: receiver
+					success: false
 					errorCode: if typeof err is 'string' then err else 'internal-error'
 
 		when 'accept', 'decline'
