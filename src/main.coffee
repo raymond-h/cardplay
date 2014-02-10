@@ -1,7 +1,4 @@
-http = require 'http'
 net = require 'net'
-url = require 'url'
-{EventEmitter} = require 'events'
 
 Datastore = require 'nedb'
 
