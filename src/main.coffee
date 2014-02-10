@@ -1,5 +1,5 @@
 net = require 'net'
-
+Q = require 'q'
 Datastore = require 'nedb'
 
 CardManager = require './card-manager'
@@ -107,38 +107,33 @@ handleJsonData = (socket, data) ->
 		when 'challenge'
 			[sender, receiver] = [socket.username, data.username]
 
-			if not sender? # client is not logged in
-				socket.writeJson type: 'challenge', username: receiver,
-					success: false, errorCode: 'not-logged-in'
+			Q.fcall ->
+				if not sender? then throw 'not-logged-in'
 
-				return
+				Q.ninvoke userStorage, 'isRegistered', receiver
 
-			userStorage.isRegistered receiver, (err, registered) ->
-				if err?
-					console.error err.stack
-					socket.writeJson type: 'challenge', username: receiver,
-						success: false, errorCode: 'internal-error'
+			.then (registered) ->
+				if not registered then throw 'nonexistant-username'
 
-					return
+				Q.ninvoke challengeStorage, 'add', {sender, receiver}
 
-				if registered
-					socket.writeJson type: 'challenge', username: receiver,
-						success: false, errorCode: 'nonexistant-username'
+			.then (challenge) ->
+				socket.writeJson
+					type: 'challenge',
+					username: receiver,
+					success: true
+					challengeId: challenge._id,
 
-					return
+				# tell receiver that they were challenged by the sender
 
-				challengeStorage.add {sender, receiver}, (err, challenge) ->
-					if err?
-						console.error err.stack
-						socket.writeJson type: 'challenge', username: receiver,
-							success: false, errorCode: 'internal-error'
+			.fail (err) ->
+				console.log err.stack if err instanceof Error
 
-						return
-
-					socket.writeJson type: 'challenge', username: receiver,
-						challengeId: challenge._id, success: true
-
-					# tell receiver that they were challenged by the sender
+				socket.writeJson
+					type: 'challenge',
+					username: receiver,
+					success: false,
+					errorCode: if typeof err is 'string' then err else 'internal-error'
 
 		when 'accept', 'decline'
 			reply = data.type
