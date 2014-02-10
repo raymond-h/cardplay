@@ -125,7 +125,7 @@ handleJsonData = (socket, data) ->
 				# tell receiver that they were challenged by the sender
 
 			.fail (err) ->
-				console.log err.stack if err instanceof Error
+				console.error socket.username ? socket.remoteAddress, err.stack ? err
 
 				socket.writeJson
 					type: 'challenge',
