@@ -107,15 +107,13 @@ handleJsonData = (socket, data) ->
 		when 'challenge'
 			[sender, receiver] = [socket.username, data.username]
 
-			Q.fcall ->
-				if not sender? then throw 'not-logged-in'
+			Q.fcall -> if not sender? then throw 'not-logged-in'
 
-				Q.ninvoke userStorage, 'isRegistered', receiver
+			.then -> Q.ninvoke userStorage, 'isRegistered', receiver
 
-			.then (registered) ->
-				if not registered then throw 'nonexistant-username'
+			.then (registered) -> if not registered then throw 'nonexistant-username'
 
-				Q.ninvoke challengeStorage, 'add', {sender, receiver}
+			.then -> Q.ninvoke challengeStorage, 'add', {sender, receiver}
 
 			.then (challenge) ->
 				socket.writeJson
