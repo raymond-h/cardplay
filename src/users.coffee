@@ -1,5 +1,3 @@
-NedbDatastore = require 'nedb'
-
 class UserStorageError extends Error
 	constructor: (@message, @code) ->
 		super message

@@ -1,5 +1,3 @@
-_ = require 'underscore'
-
 class ChallengeStorage
 	constructor: (@db) ->
 
