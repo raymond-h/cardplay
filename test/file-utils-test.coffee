@@ -53,6 +53,6 @@ describe 'File utils', ->
 
 			doneAll = _.after 4, ->
 				try
-					files.should.include f for f in expectedFiles
+					files.should.include.members expectedFiles
 					done()
 				catch e then done e
