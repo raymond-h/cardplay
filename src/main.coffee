@@ -1,6 +1,7 @@
 net = require 'net'
 Q = require 'q'
 Datastore = require 'nedb'
+_ = require 'underscore'
 
 CardManager = require './card-manager'
 sendUtils = require './send-utils'
@@ -107,11 +108,15 @@ handleJsonData = (socket, data) ->
 		when 'challenge'
 			[sender, receiver] = [socket.username, data.username]
 
-			Q.fcall -> if not sender? then throw 'not-logged-in'
+			Q.fcall ->
+				if not sender?
+					throw _.extend new Error, code: 'not-logged-in'
 
 			.then -> Q.ninvoke userStorage, 'isRegistered', receiver
 
-			.then (registered) -> if not registered then throw 'nonexistant-username'
+			.then (registered) ->
+				if not registered
+					throw _.extend new Error, code: 'nonexistant-username'
 
 			.then -> Q.ninvoke challengeStorage, 'add', {sender, receiver}
 
@@ -131,13 +136,14 @@ handleJsonData = (socket, data) ->
 					type: 'challenge'
 					username: receiver
 					success: false
-					errorCode: if typeof err is 'string' then err else 'internal-error'
+					errorCode: err.code ? 'internal-error'
 
 		when 'accept', 'decline'
 			reply = data.type
 
 			challengeStorage.getForUser socket.username, (err, challenges) ->
-				[challenge, rest...] = (c for c in challenges when c._id is data.challengeId)
+				[challenge, rest...] =
+					(c for c in challenges when c._id is data.challengeId)
 
 				console.log challenges
 
