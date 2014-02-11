@@ -36,12 +36,11 @@ class Field
 		# emit event
 
 class Player
-	constructor: (@username) ->
+	constructor: (@username, @field = null) ->
 		@deck = []
 		@hand = []
 		@discard = []
 		@health = {}
-		@field = null
 
 	playCard: (instance, x, y) ->
 		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
