@@ -63,4 +63,11 @@ class Card extends EventEmitter
 	constructor: (config) ->
 		_.extend @, config
 
-module.exports = {Session, Field, Card, Player}
+class Health
+	constructor: (@max, @current = @max) ->
+
+		Object.defineProperty @, 'multiplier',
+			get: -> @current / @max
+			set: (mult) -> @current = @max * mult
+
+module.exports = {Session, Field, Card, Player, Health}
