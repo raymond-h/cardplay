@@ -137,7 +137,7 @@ handleJsonData = (socket, data) ->
 			reply = data.type
 
 			challengeStorage.getForUser socket.username, (err, challenges) ->
-				[challenge, ...] = (c for c in challenges when c._id is data.challengeId)
+				[challenge, rest...] = (c for c in challenges when c._id is data.challengeId)
 
 				console.log challenges
 
