@@ -20,8 +20,8 @@ module.exports = (grunt) ->
 			build:
 				files: src: ['src/*.coffee']
 			options:
-				no_tabs: level: 'ignore'
-				indentation: level: 'ignore'
+				no_tabs: level: 'ignore' # this is tab land, boy
+				indentation: value: 1 # single tabs
 
 		mochaTest:
 			test:
