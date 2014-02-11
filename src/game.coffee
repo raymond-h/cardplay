@@ -9,7 +9,6 @@ class Session extends EventEmitter
 		@round = 1
 
 		Object.defineProperty @, 'currentPlayer',
-			writable: yes
 			get: => @players[@turn]
 
 	progressTurn: ->
