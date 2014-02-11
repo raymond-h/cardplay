@@ -15,9 +15,6 @@ describe 'Game logic', ->
 				health.current = 30
 				health.multiplier.should.equal 0.5
 
-				health.current = 15
-				health.multiplier.should.equal 0.25
-
 				health.current = 0
 				health.multiplier.should.equal 0
 
@@ -30,8 +27,39 @@ describe 'Game logic', ->
 				health.multiplier = 0.5
 				health.current.should.equal = 30
 
-				health.multiplier = 0.25
-				health.current.should.equal = 15
-
 				health.multiplier = 0
 				health.current.should.equal = 0
+
+		describe '.atMin', ->
+			it 'should return true if health is 0 or less', ->
+				health = new Health 60
+
+				health.current = 0
+				health.atMin.should.equal true
+
+				health.current = -30
+				health.atMin.should.equal true
+
+			it 'should return false if health is more than 0', ->
+				health = new Health 60
+				health.atMin.should.equal false
+
+				health.current = 30
+				health.atMin.should.equal false
+
+		describe '.atMax', ->
+			it 'should return true if health is max or more', ->
+				health = new Health 60
+				health.atMax.should.equal true
+
+				health.current = 90
+				health.atMax.should.equal true
+
+			it 'should return false if health is less than max', ->
+				health = new Health 60
+
+				health.current = 30
+				health.atMax.should.equal false
+
+				health.current = 0
+				health.atMax.should.equal false

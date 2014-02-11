@@ -66,8 +66,12 @@ class Card extends EventEmitter
 class Health
 	constructor: (@max, @current = @max) ->
 
-		Object.defineProperty @, 'multiplier',
-			get: -> @current / @max
-			set: (mult) -> @current = @max * mult
+		Object.defineProperties @,
+			'multiplier':
+				get: -> @current / @max
+				set: (mult) -> @current = @max * mult
+
+			'atMin': get: -> @current <= 0
+			'atMax': get: -> @current >= @max
 
 module.exports = {Session, Field, Card, Player, Health}
