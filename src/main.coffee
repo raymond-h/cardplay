@@ -98,7 +98,9 @@ handleJsonData = (socket, data) ->
 						{
 							challengeId: challenge._id
 							sent
-							username: if sent then challenge.receiver else challenge.sender
+							username:
+								if sent then challenge.receiver
+								else challenge.sender
 						}
 
 					socket.writeJson
