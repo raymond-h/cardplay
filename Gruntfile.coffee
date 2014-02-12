@@ -18,7 +18,7 @@ module.exports = (grunt) ->
 
 		coffeelint:
 			build:
-				files: src: ['src/*.coffee']
+				files: src: ['src/**/*.coffee', 'test/**/*.coffee']
 			options:
 				no_tabs: level: 'ignore' # this is tab land, boy
 				indentation: value: 1 # single tabs
@@ -33,7 +33,7 @@ module.exports = (grunt) ->
 
 		watch:
 			lint:
-				files: ['src/*.coffee']
+				files: ['src/*.coffee', 'test/*.coffee']
 				tasks: ['lint', 'test']
 
 	grunt.registerTask 'default', ["build"]
