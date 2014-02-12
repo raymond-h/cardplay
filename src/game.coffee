@@ -27,6 +27,18 @@ class Session extends EventEmitter
 			health: {}
 		}
 
+	toJSON: ->
+		{
+			@turn, @round
+
+			players: {
+				username: p.username, deck: p.deck,
+				hand: p.hand, discard: p.discard, field: null
+			} for p in @players
+		}
+
+	@fromJSON: (json) ->
+
 class Field
 	constructor: (@owner, @width = 6, @height = 2) ->
 		@field = (null for y in [0...height] for x in [0...width])

@@ -6,6 +6,29 @@ chai.should()
 describe 'Game logic', ->
 	{Session, Player, Card, Field, Health} = require '../src/game'
 
+	describe 'Session', ->
+		describe '.toJSON()', ->
+			it.only 'should return a JSON representation of a session', ->
+				session = new Session [
+					new Player 'kayarr'
+					new Player 'master'
+				]
+
+				expect( session.toJSON() ).to.exist.and.deep.equal {
+					turn: 0
+					round: 1
+					players: [
+						{
+							username: 'kayarr', deck: [], hand: [],
+							discard: [], field: null
+						}
+						{
+							username: 'master', deck: [], hand: [],
+							discard: [], field: null
+						}
+					]
+				}
+
 	describe 'Health', ->
 		describe '.multiplier', ->
 			it 'should return the multiplier of the health', ->
