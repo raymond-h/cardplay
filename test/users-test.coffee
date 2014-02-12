@@ -71,19 +71,20 @@ describe 'UserStorage', ->
 					done()
 
 	describe '.login()', ->
-		it 'should mark user as logged in if username and password are correct', (done) ->
-			db.register 'kayarr', 'boat', (err, user) ->
-				return done err if err?
+		it 'should mark user as logged in if username and password are correct',
+			(done) ->
+				db.register 'kayarr', 'boat', (err, user) ->
+					return done err if err?
 
-				db.login 'kayarr', 'boat', (err, user) ->
-					expect(err).to.not.exist
-					expect(user).to.exist
+					db.login 'kayarr', 'boat', (err, user) ->
+						expect(err).to.not.exist
+						expect(user).to.exist
 
-					user.should.deep.equal { username: 'kayarr', password: 'boat' }
+						user.should.deep.equal { username: 'kayarr', password: 'boat' }
 
-					db.loggedInUsers.should.contain 'kayarr'
+						db.loggedInUsers.should.contain 'kayarr'
 
-					done()
+						done()
 
 		it 'should return an error if the password is wrong', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->

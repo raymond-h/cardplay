@@ -38,21 +38,22 @@ describe 'File utils', ->
 		it 'should call a done callback when it has finished walking', (done) ->
 			fileUtils.walkFolder 'walk-test', (->), done
 
-		it 'should call a callback for every file it finds in a folder recursively', (done) ->
-			expectedFiles = (path.resolve file for file in [
-					'./walk-test/banana.txt'
-					'./walk-test/yeah.boat'
-					'./walk-test/wat/wooot.txt'
-					'./walk-test/wat/excellent.coffee'
-				])
-			files = []
+		it 'should call a callback for every file it finds in a folder recursively',
+			(done) ->
+				expectedFiles = (path.resolve file for file in [
+						'./walk-test/banana.txt'
+						'./walk-test/yeah.boat'
+						'./walk-test/wat/wooot.txt'
+						'./walk-test/wat/excellent.coffee'
+					])
+				files = []
 
-			fileUtils.walkFolder 'walk-test', (err, file) ->
-				files.push file
-				doneAll()
+				fileUtils.walkFolder 'walk-test', (err, file) ->
+					files.push file
+					doneAll()
 
-			doneAll = _.after 4, ->
-				try
-					files.should.include.members expectedFiles
-					done()
-				catch e then done e
+				doneAll = _.after 4, ->
+					try
+						files.should.include.members expectedFiles
+						done()
+					catch e then done e
