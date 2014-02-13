@@ -2,11 +2,8 @@ _ = require 'underscore'
 {EventEmitter} = require 'events'
 
 class Session extends EventEmitter
-	constructor: (@players) ->
+	constructor: (@players, @turn = 0, @round = 1) ->
 		p.session = @ for p in @players
-
-		@turn = 0
-		@round = 1
 
 		Object.defineProperty @, 'currentPlayer',
 			get: => @players[@turn]
@@ -27,11 +24,31 @@ class Session extends EventEmitter
 			health: {}
 		}
 
-	@serializeField: (field) ->
+	toJSON: ->
 		{
-			width: field.width
-			height: field.height
-			field: for row, y in field.field
+			@turn, @round
+
+			players: (p.toJSON() for p in @players)
+		}
+
+	@fromJSON: (json) ->
+		players = (Player.fromJSON p for p in json.players)
+
+		new Session players, json.turn, json.round
+
+class Field
+	constructor: (@width = 6, @height = 2) ->
+		@field = (null for x in [0...@width] for y in [0...@height])
+
+	put: (instance, x, y) ->
+		@field[y][x] = instance
+		# emit event
+
+	toJSON: ->
+		{
+			width: @width
+			height: @height
+			field: for row, y in @field
 				for v, x in row
 					if not v? then null
 
@@ -44,7 +61,7 @@ class Session extends EventEmitter
 					}
 		}
 
-	@deserializeField: (json) ->
+	@fromJSON: (json) ->
 		{width, height} = json
 		field = new Field width, height
 
@@ -52,44 +69,7 @@ class Session extends EventEmitter
 			for v, x in row
 				if not v? then null
 
-				else {
-					card: v.card.id
-					health: {
-						current: v.health.current
-						max: v.health.max
-					}
-				}
-
 		field
-
-	toJSON: ->
-		{
-			@turn, @round
-
-			players: {
-				username: p.username,
-				deck: p.deck, hand: p.hand,
-				discard: p.discard,
-				field: Session.serializeField p.field
-			} for p in @players
-		}
-
-	@fromJSON: (json) ->
-		players = for p in json.players
-			field = Session.deserializeField p.field
-
-			_.extend (new Player p.username, field),
-				_.pick p, 'deck', 'hand', 'discard'
-
-		new Session players
-
-class Field
-	constructor: (@width = 6, @height = 2) ->
-		@field = (null for x in [0...@width] for y in [0...@height])
-
-	put: (instance, x, y) ->
-		@field[y][x] = instance
-		# emit event
 
 class Player
 	constructor: (@username, @field = null) ->
@@ -116,6 +96,20 @@ class Player
 				# perform action (x, y are unused)
 				# move to discard pile
 				discard.push instance
+
+	toJSON: ->
+		{
+			username: @username,
+			deck: @deck, hand: @hand,
+			discard: @discard,
+			field: @field.toJSON()
+		}
+
+	@fromJSON: (json) ->
+		field = Field.fromJSON json.field
+
+		_.extend (new Player json.username, field),
+			_.pick json, 'deck', 'hand', 'discard'
 
 class Card extends EventEmitter
 	constructor: (config) ->

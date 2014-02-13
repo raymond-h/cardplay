@@ -7,41 +7,6 @@ describe 'Game logic', ->
 	{Session, Player, Card, Field, Health} = require '../src/game'
 
 	describe 'Session', ->
-		describe '.serializeField()', ->
-			it 'should return a JSON representation of a given Field instance', ->
-				player = new Player 'kayarr', new Field
-
-				serialized = Session.serializeField player.field
-
-				expected = {
-					width: 6, height: 2
-					field: [
-						[ null, null, null, null, null, null ]
-						[ null, null, null, null, null, null ]
-					]
-				}
-
-				expect(serialized).to.exist.and.deep.equal expected
-
-		describe '.deserializeField()', ->
-			it 'should return a Field instance from the given JSON', ->
-				json = {
-					width: 6, height: 2
-					field: [
-						[ null, null, null, null, null, null ]
-						[ null, null, null, null, null, null ]
-					]
-				}
-
-				field = Session.deserializeField json
-
-				field.width.should.equal 6
-				field.height.should.equal 2
-				field.field.should.deep.equal [
-					[ null, null, null, null, null, null ]
-					[ null, null, null, null, null, null ]
-				]
-
 		describe '.toJSON()', ->
 			it 'should return a JSON representation of a session', ->
 				session = new Session [
@@ -80,7 +45,7 @@ describe 'Game logic', ->
 		describe '.fromJSON()', ->
 			it 'should construct a Session object from a JSON representation', ->
 				json = {
-					turn: 0, round: 1
+					turn: 1, round: 9
 					players: [
 						{
 							username: 'kayarr', deck: [],
@@ -110,11 +75,91 @@ describe 'Game logic', ->
 				session = Session.fromJSON json
 
 				expect(session).to.exist.and.be.instanceof Session
-				session.turn.should.equal 0
-				session.round.should.equal 1
+				session.turn.should.equal 1
+				session.round.should.equal 9
 
 				session.players.should.have.length 2
-				player.should.be.instanceof Player for player in session.players
+				for player in session.players
+					player.should.be.instanceof Player
+					player.field.should.be.instanceof Field
+
+	describe 'Field', ->
+		describe '.toJSON()', ->
+			it 'should return a JSON representation of a Field instance', ->
+				field = new Field
+
+				serialized = field.toJSON()
+
+				expected = {
+					width: 6, height: 2
+					field: [
+						[ null, null, null, null, null, null ]
+						[ null, null, null, null, null, null ]
+					]
+				}
+
+				expect(serialized).to.deep.equal expected
+
+		describe '.fromJSON()', ->
+			it 'should return a Field instance from the given JSON', ->
+				json = {
+					width: 6, height: 2
+					field: [
+						[ null, null, null, null, null, null ]
+						[ null, null, null, null, null, null ]
+					]
+				}
+
+				field = Field.fromJSON json
+
+				field.width.should.equal 6
+				field.height.should.equal 2
+				field.field.should.deep.equal [
+					[ null, null, null, null, null, null ]
+					[ null, null, null, null, null, null ]
+				]
+
+	describe 'Field', ->
+		describe '.toJSON()', ->
+			it 'should return a JSON representation of a Player instance', ->
+				player = new Player 'kayarr', new Field
+
+				expected = {
+					username: 'kayarr'
+					deck: [], hand: [], discard: []
+					field: {
+						width: 6, height: 2
+						field: [
+							[ null, null, null, null, null, null ]
+							[ null, null, null, null, null, null ]
+						]
+					}
+				}
+				serialized = player.toJSON()
+
+				expect(serialized).to.deep.equal expected
+
+		describe '.fromJSON()', ->
+			it 'should return a Player instance from the given JSON', ->
+				json = {
+					username: 'kayarr'
+					deck: [], hand: [], discard: []
+					field: {
+						width: 6, height: 2
+						field: [
+							[ null, null, null, null, null, null ]
+							[ null, null, null, null, null, null ]
+						]
+					}
+				}
+
+				player = Player.fromJSON json
+
+				player.username.should.equal 'kayarr'
+				player.deck.should.be.instanceof(Array).and.have.length 0
+				player.hand.should.be.instanceof(Array).and.have.length 0
+				player.discard.should.be.instanceof(Array).and.have.length 0
+				player.field.should.be.instanceof Field
 
 	describe 'Health', ->
 		describe '.multiplier', ->
