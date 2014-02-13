@@ -27,24 +27,68 @@ class Session extends EventEmitter
 			health: {}
 		}
 
+	@serializeField: (field) ->
+		{
+			width: field.width
+			height: field.height
+			field: for row, y in field.field
+				for v, x in row
+					if not v? then null
+
+					else {
+						card: v.card.id
+						health: {
+							current: v.health.current
+							max: v.health.max
+						}
+					}
+		}
+
+	@deserializeField: (json) ->
+		{width, height} = json
+		field = new Field width, height
+
+		field.field = for row, y in json.field
+			for v, x in row
+				if not v? then null
+
+				else {
+					card: v.card.id
+					health: {
+						current: v.health.current
+						max: v.health.max
+					}
+				}
+
+		field
+
 	toJSON: ->
 		{
 			@turn, @round
 
 			players: {
-				username: p.username, deck: p.deck,
-				hand: p.hand, discard: p.discard, field: null
+				username: p.username,
+				deck: p.deck, hand: p.hand,
+				discard: p.discard,
+				field: Session.serializeField p.field
 			} for p in @players
 		}
 
 	@fromJSON: (json) ->
+		players = for p in json.players
+			field = Session.deserializeField p.field
+
+			_.extend (new Player p.username, field),
+				_.pick p, 'deck', 'hand', 'discard'
+
+		new Session players
 
 class Field
-	constructor: (@owner, @width = 6, @height = 2) ->
-		@field = (null for y in [0...height] for x in [0...width])
+	constructor: (@width = 6, @height = 2) ->
+		@field = (null for x in [0...@width] for y in [0...@height])
 
 	put: (instance, x, y) ->
-		@field[x][y] = instance
+		@field[y][x] = instance
 		# emit event
 
 class Player
@@ -53,6 +97,8 @@ class Player
 		@hand = []
 		@discard = []
 		@health = {}
+
+		@field.owner = @ if @field?
 
 	playCard: (instance, x, y) ->
 		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
