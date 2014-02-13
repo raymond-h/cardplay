@@ -43,10 +43,7 @@ class Field
 
 					else {
 						card: v.card.id
-						health: {
-							current: v.health.current
-							max: v.health.max
-						}
+						health: v.health
 					}
 		}
 
@@ -57,6 +54,11 @@ class Field
 		field.field = for row, y in json.field
 			for v, x in row
 				if not v? then null
+
+				else
+					inst = { card: null } # TODO get reference to card object by id
+					if v.health?
+						inst.health = new Health v.health.max, v.health.current
 
 		field
 
