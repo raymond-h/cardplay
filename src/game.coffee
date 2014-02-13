@@ -3,8 +3,6 @@ _ = require 'underscore'
 
 class Session extends EventEmitter
 	constructor: (@players, @turn = 0, @round = 1) ->
-		p.session = @ for p in @players
-
 		Object.defineProperty @, 'currentPlayer',
 			get: => @players[@turn]
 
@@ -77,8 +75,6 @@ class Player
 		@hand = []
 		@discard = []
 		@health = {}
-
-		@field.owner = @ if @field?
 
 	playCard: (instance, x, y) ->
 		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
