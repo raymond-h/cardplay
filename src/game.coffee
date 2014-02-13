@@ -13,15 +13,6 @@ class Session extends EventEmitter
 			@round++
 		# emit events regarding turn and round changes
 
-	newInstance: (owner, card) ->
-		# create new object repr. an instance of passed-in card
-		{
-			card
-			owner
-			session: @
-			health: {}
-		}
-
 	toJSON: ->
 		{
 			@turn, @round
