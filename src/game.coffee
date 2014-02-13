@@ -102,6 +102,13 @@ class Card extends EventEmitter
 	constructor: (config) ->
 		_.extend @, config
 
+	newInstance: ->
+		inst = { card: @ }
+
+		inst.health = new Health @maxHealth if @type is 'unit'
+
+		inst
+
 class Health
 	constructor: (@max, @current = @max) ->
 
