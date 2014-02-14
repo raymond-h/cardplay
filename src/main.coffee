@@ -7,12 +7,16 @@ CardManager = require './card-manager'
 sendUtils = require './send-utils'
 UserStorage = require './users'
 ChallengeStorage = require './challenges'
+SessionStorage = require './sessions'
 
 userDb = new Datastore()
 userStorage = new UserStorage userDb
 
 challengeDb = new Datastore()
 challengeStorage = new ChallengeStorage challengeDb
+
+sessionDb = new Datastore()
+sessionStorage = new SessionStorage sessionDb
 
 usernameSockets = {}
 
@@ -147,6 +151,38 @@ handleJsonData = (socket, data) ->
 				[challenge, rest...] =
 					(c for c in challenges when c._id is data.challengeId)
 
-				console.log challenges
+				# console.log "User #{socket.username}
+				# 	#{if reply is 'accept' then 'accepted' else 'declined'}
+				# 	challenge:", challenge
 
-				console.log "User #{socket.username} action: #{reply}:", challenge
+				if challenge.sender is socket.username
+					console.error "#{socket.username} tried to #{reply} a challenge they sent themselves"
+
+				else if reply is 'accept'
+					sessionStorage.new [challenge.sender, challenge.receiver], (err, session) ->
+						console.log "Created new session!
+							#{session.players[0].username} vs #{session.players[1].username}!"
+
+						challengeStorage.remove challenge._id, (err) ->
+							console.log "Removed accepted challenge"
+
+				else
+					challengeStorage.remove challenge._id, (err) ->
+						console.log "Removed declined challenge"
+
+		when 'test'
+
+			if not socket.username?
+				console.log "Client is not logged in"
+			else
+				console.log "Client is logged in as #{socket.username}"
+
+				challengeStorage.getForUser socket.username, (err, challenges) ->
+					return console.error err if err?
+
+					console.log "Challenges:", challenges
+
+					sessionStorage.getForUser socket.username, (err, sessions) ->
+						return console.error err if err?
+
+						console.log "Sessions:", sessions
