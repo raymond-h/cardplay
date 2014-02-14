@@ -14,11 +14,15 @@ class Session extends EventEmitter
 		# emit events regarding turn and round changes
 
 	toJSON: ->
-		{
+		json = {
 			@turn, @round
 
 			players: (p.toJSON() for p in @players)
 		}
+
+		json._id = @id if @id?
+
+		json
 
 	@fromJSON: (json) ->
 		players = (Player.fromJSON p for p in json.players)
