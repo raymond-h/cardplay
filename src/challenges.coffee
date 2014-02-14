@@ -14,4 +14,9 @@ class ChallengeStorage
 
 		@db.insert { sender: params.sender, receiver: params.receiver }, callback
 
+	remove: (id, callback) ->
+		# callback: (err)
+
+		@db.remove { _id: id }, callback
+
 module.exports = ChallengeStorage

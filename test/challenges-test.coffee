@@ -21,3 +21,6 @@ describe 'ChallengeStorage', ->
 		
 	describe '.add()', ->
 		it 'should add challenges with the given sender and receiver user names'
+
+	describe '.remove()', ->
+		it 'should remove a challenge by its given ID'
