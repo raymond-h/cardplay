@@ -119,7 +119,7 @@ describe 'Game logic', ->
 					[ null, null, null, null, null, null ]
 				]
 
-	describe 'Field', ->
+	describe 'Player', ->
 		describe '.toJSON()', ->
 			it 'should return a JSON representation of a Player instance', ->
 				player = new Player 'kayarr', new Field
