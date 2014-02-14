@@ -38,13 +38,17 @@ class SessionStorage
 	save: (session, callback) ->
 		# callback: (err)
 
-		@db.update { _id: session.id }, session.toJSON(), (err, numReplaced, newDoc) ->
-			return callback err if err?
+		@db.update { _id: session.id }, session.toJSON(),
+			(err, numReplaced, newDoc) ->
+				return callback err if err?
 
-			callback if numReplaced is 0
-					_.extend new Error("The session does not match any registered session"),
-						code: 'nonexistant-session'
-				else
-					null
+				callback (
+					if numReplaced is 0
+						_.extend new Error(
+							"The session does not match any registered session"),
+							code: 'nonexistant-session'
+					else
+						null
+				)
 
 module.exports = SessionStorage

@@ -74,7 +74,8 @@ describe 'SessionStorage', ->
 		# it 'should return an error if the given user names are not registered'
 
 	describe '.load()', ->
-		it 'should create a Session object from a document with the given ID', (done) ->
+		it 'should create a Session object from a document with the given ID',
+		(done) ->
 			db.new ['kayarr', 'master'], (err, session) ->
 				return done err if err?
 
@@ -126,23 +127,27 @@ describe 'SessionStorage', ->
 						catch e then done e
 					
 
-		it 'should return an error if the given session\'s ID does not exist already', (done) ->
+		it 'should return an error if the given session\'s ID
+			does not exist already',
+			(done) ->
 
-			session = new Session [
-				new Player 'kayarr', new Field
-				new Player 'master', new Field
-			]
+				session = new Session [
+					new Player 'kayarr', new Field
+					new Player 'master', new Field
+				]
 
-			session.progressTurn() for i in [1..11] # progress 11 turns
-			# turn is 1, round is 6
+				session.progressTurn() for i in [1..11] # progress 11 turns
+				# turn is 1, round is 6
 
-			db.save session, (err) ->
-				try
-					expect(err).to.exist.and.be.instanceof Error
-					err.message.should.equal "The session does not match any registered session"
-					err.should.have.property 'code', 'nonexistant-session'
-					
-					done()
+				db.save session, (err) ->
+					try
+						expect(err).to.exist.and.be.instanceof Error
+						err.message.should.equal(
+							"The session does not match any registered session"
+						)
+						err.should.have.property 'code', 'nonexistant-session'
+						
+						done()
 
-				catch e then done e
+					catch e then done e
 				
