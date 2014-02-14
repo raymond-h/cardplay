@@ -40,8 +40,8 @@ describe 'SessionStorage', ->
 							expect(s2loaded).to.deep.equal s2.toJSON()
 
 							done()
-						catch e then done e
 						
+						catch e then done e
 
 		# it 'should return an error if the given user is not registered'
 
