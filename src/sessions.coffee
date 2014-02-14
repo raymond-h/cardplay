@@ -8,12 +8,14 @@ class SessionStorage
 
 	new: (usernames, callback) ->
 		# callback: (err, session instance)
-		players = new Player u for u in usernames
+		players = (new Player(u, new Field) for u in usernames)
 		session = new Session players
 
-		@db.insert session, (err) ->
+		@db.insert session.toJSON(), (err, doc) ->
 			if err? then callback err
-			else callback null, session
+			else
+				session.id = doc._id
+				callback null, session
 
 	load: (id, callback) ->
 		# callback: (err, session instance)
