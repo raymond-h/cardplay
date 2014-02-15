@@ -1,6 +1,6 @@
 {
   "name": "cardplay",
-  "version": "0.0.1",
+  "version": "0.5.0",
   "description": "Card-battling and scripting, now with 90% more JS/CS!",
   "main": "lib/main.js",
   "scripts": {
