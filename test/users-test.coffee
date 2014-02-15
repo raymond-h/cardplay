@@ -114,6 +114,36 @@ describe 'UserStorage', ->
 
 					done()
 
+	describe 'logout()', ->
+		it 'should log a user out if logged in', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				return done err if err?
+				db.login 'kayarr', 'boat', (err, user) ->
+					return done err if err?
+
+					db.logout 'kayarr', (err) ->
+						try
+							expect(err).to.not.exist
+							db.loggedInUsers.should.not.contain 'kayarr'
+
+							done()
+
+						catch e then done e
+
+		it 'should return an error if the specified user is not logged in', (done) ->
+			db.register 'kayarr', 'boat', (err, user) ->
+				return done err if err?
+
+				db.logout 'kayarr', (err) ->
+						try
+							expect(err).to.exist
+							err.message.should.equal "Username 'kayarr' is not logged in"
+							err.should.have.property 'code', 'not-logged-in'
+
+							done()
+
+						catch e then done e
+
 	describe '.isRegistered()', ->
 		it 'should return true if the user name exists', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->

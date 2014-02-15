@@ -39,6 +39,19 @@ class UserStorage
 				callback new UserStorageError 'Invalid username or password',
 					'username-password-invalid'
 
+	logout: (username, callback) ->
+		# callback: (err)
+
+		if username in @loggedInUsers
+			i = @loggedInUsers.indexOf username
+			@loggedInUsers[i..i] = []
+
+			callback null
+
+		else
+			callback new UserStorageError "Username '#{username}' is not logged in",
+				'not-logged-in'
+
 	get: (username, callback) ->
 		# callback: (err, user)
 
