@@ -176,6 +176,31 @@ handleJsonData = (socket, data) ->
 					challengeStorage.remove challenge._id, (err) ->
 						console.log "Removed declined challenge"
 
+		when 'get-sessions'
+			sender = socket.username
+
+			if not sender? # client is not logged in
+				socket.writeJson type: 'sessions-list', errorCode: 'not-logged-in'
+
+			else # client is logged in
+				sessionStorage.getForUser sender, (err, sessions) ->
+					sessions = for session in sessions
+
+						playerIndex = session.players.indexOf(
+							_.find session.players, ((p) -> p.username is sender)
+						)
+
+						{
+							sessionId: session._id
+							turn: session.turn, round: session.round
+							yourTurn: playerIndex is session.turn
+							players: (p.username for p in session.players)
+						}
+
+					socket.writeJson
+						type: 'sessions-list'
+						sessions: sessions
+
 		when 'test'
 
 			if not socket.username?
