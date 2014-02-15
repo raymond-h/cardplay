@@ -191,4 +191,9 @@ handleJsonData = (socket, data) ->
 					sessionStorage.getForUser socket.username, (err, sessions) ->
 						return console.error err if err?
 
-						console.log "Sessions:", sessions
+						util = require 'util'
+
+						console.log "Sessions:"
+						console.log util.inspect sessions,
+							depth: 5
+							colors: yes
