@@ -8,7 +8,7 @@ fileUtils = require './file-utils'
 game = require './game'
 {Card} = game
 
-getJsSource = (file) ->
+exports.getJsSource = getJsSource = (file) ->
 	file = path.resolve file
 	contents = fs.readFileSync file, encoding: 'utf-8'
 
