@@ -5,8 +5,7 @@ CoffeeScript = require 'coffee-script'
 vm = require 'vm'
                
 fileUtils = require './file-utils'
-game = require './game'
-{Card} = game
+{Card} = require './game'
 
 exports.getJsSource = getJsSource = (file) ->
 	file = path.resolve file
