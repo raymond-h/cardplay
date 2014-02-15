@@ -1,4 +1,5 @@
 chai = require 'chai'
+{asyncCatch} = require './common'
 
 {expect} = chai
 chai.should()
@@ -7,7 +8,6 @@ describe 'Game logic', ->
 	{Session, Player, Card, Field, Health} = require '../src/game'
 	{CardManager} = require '../src/card-manager'
 	testCard = cardManager = null
-
 
 	before ->
 		cardManager = new CardManager

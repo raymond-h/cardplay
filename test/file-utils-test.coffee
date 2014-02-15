@@ -1,4 +1,5 @@
 chai = require 'chai'
+{asyncCatch} = require './common'
 
 {expect} = chai
 chai.should()
@@ -52,8 +53,7 @@ describe 'File utils', ->
 					files.push file
 					doneAll()
 
-				doneAll = _.after 4, ->
-					try
-						files.should.include.members expectedFiles
-						done()
-					catch e then done e
+				doneAll = _.after 4, asyncCatch(done) () ->
+					files.should.include.members expectedFiles
+					
+					done()

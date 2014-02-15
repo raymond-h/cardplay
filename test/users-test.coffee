@@ -1,4 +1,5 @@
 chai = require 'chai'
+{asyncCatch} = require './common'
 
 {expect} = chai
 chai.should()
@@ -51,18 +52,21 @@ describe 'UserStorage', ->
 			.nodeify done
 
 		it 'should return an error if given an invalid username', (done) ->
-			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah', (err, user) ->
+			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah', asyncCatch(done) (err, user) ->
+
 				expect(err).to.exist.and.be.an.instanceof Error
 				err.should.have.property 'code', 'invalid-username'
 				err.message.should.equal "Invalid username 'U#(YTU =¤WITWYHUOcrazy'"
 				expect(user).to.not.exist
+
 				done()
 
 		it 'should return an error if a username is already taken', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.register 'kayarr', 'boat', (err, user) ->
+				db.register 'kayarr', 'boat', asyncCatch(done) (err, user) ->
+
 					expect(err).to.exist.and.be.instanceof Error
 					err.should.have.property 'code', 'username-taken'
 					err.message.should.equal "Username 'kayarr' is already taken"
@@ -76,7 +80,8 @@ describe 'UserStorage', ->
 				db.register 'kayarr', 'boat', (err, user) ->
 					return done err if err?
 
-					db.login 'kayarr', 'boat', (err, user) ->
+					db.login 'kayarr', 'boat', asyncCatch(done) (err, user) ->
+
 						expect(err).to.not.exist
 						expect(user).to.exist
 
@@ -90,7 +95,8 @@ describe 'UserStorage', ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.login 'kayarr', 'woah', (err, user) ->
+				db.login 'kayarr', 'woah', asyncCatch(done) (err, user) ->
+
 					expect(err).to.exist.and.be.instanceof Error
 					err.should.have.property 'code', 'username-password-invalid'
 					err.message.should.equal 'Invalid username or password'
@@ -104,7 +110,8 @@ describe 'UserStorage', ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.login 'woot', 'boat', (err, user) ->
+				db.login 'woot', 'boat', asyncCatch(done) (err, user) ->
+
 					expect(err).to.exist.and.be.instanceof Error
 					err.should.have.property 'code', 'username-password-invalid'
 					err.message.should.equal 'Invalid username or password'
@@ -121,69 +128,54 @@ describe 'UserStorage', ->
 				db.login 'kayarr', 'boat', (err, user) ->
 					return done err if err?
 
-					db.logout 'kayarr', (err) ->
-						try
-							expect(err).to.not.exist
-							db.loggedInUsers.should.not.contain 'kayarr'
+					db.logout 'kayarr', asyncCatch(done) (err) ->
+						expect(err).to.not.exist
+						db.loggedInUsers.should.not.contain 'kayarr'
 
-							done()
-
-						catch e then done e
+						done()
 
 		it 'should return an error if the specified user is not logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.logout 'kayarr', (err) ->
-						try
-							expect(err).to.exist
-							err.message.should.equal "Username 'kayarr' is not logged in"
-							err.should.have.property 'code', 'not-logged-in'
+				db.logout 'kayarr', asyncCatch(done) (err) ->
+						expect(err).to.exist
+						err.message.should.equal "Username 'kayarr' is not logged in"
+						err.should.have.property 'code', 'not-logged-in'
 
-							done()
-
-						catch e then done e
+						done()
 
 	describe '.isRegistered()', ->
 		it 'should return true if the user name exists', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.isRegistered 'kayarr', (err, registered) ->
-					try
-						expect(err).to.not.exist
-						expect(registered).to.exist
-						registered.should.be.true
-
-						done()
-
-					catch e then done e
-
-		it 'should return false if the user name does not exist', (done) ->
-			db.isRegistered 'kayarr', (err, registered) ->
-				try
+				db.isRegistered 'kayarr', asyncCatch(done) (err, registered) ->
 					expect(err).to.not.exist
 					expect(registered).to.exist
-					registered.should.be.false
+					registered.should.be.true
 
 					done()
 
-				catch e then done e
+		it 'should return false if the user name does not exist', (done) ->
+			db.isRegistered 'kayarr', asyncCatch(done) (err, registered) ->
+				expect(err).to.not.exist
+				expect(registered).to.exist
+				registered.should.be.false
+
+				done()
 
 	describe '.isLoggedIn()', ->
 		it 'should return false if the user is not logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
 
-				db.isLoggedIn 'kayarr', (err, loggedIn) ->
-					try
-						expect(err).to.not.exist
-						expect(loggedIn).to.exist
-						loggedIn.should.be.false
+				db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+					expect(err).to.not.exist
+					expect(loggedIn).to.exist
+					loggedIn.should.be.false
 
-						done()
-
-					catch e then done e
+					done()
 
 		it 'should return true if the user is logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
@@ -192,24 +184,18 @@ describe 'UserStorage', ->
 				db.login 'kayarr', 'boat', (err, user) ->
 					return done err if err?
 
-					db.isLoggedIn 'kayarr', (err, loggedIn) ->
-						try
-							expect(err).to.not.exist
-							expect(loggedIn).to.exist
-							loggedIn.should.be.true
+					db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+						expect(err).to.not.exist
+						expect(loggedIn).to.exist
+						loggedIn.should.be.true
 
-							done()
-
-						catch e then done e
+						done()
 
 		it 'should return an error if the user does not exist', (done) ->
-			db.isLoggedIn 'kayarr', (err, loggedIn) ->
-				try
-					expect(err).to.exist.and.be.instanceof Error
-					err.code.should.equal 'invalid-username'
-					err.message.should.equal "Username 'kayarr' does not exist"
-					expect(loggedIn).to.not.exist
+			db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+				expect(err).to.exist.and.be.instanceof Error
+				err.code.should.equal 'invalid-username'
+				err.message.should.equal "Username 'kayarr' does not exist"
+				expect(loggedIn).to.not.exist
 
-					done()
-
-				catch e then done e
+				done()
