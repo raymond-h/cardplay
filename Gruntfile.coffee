@@ -32,9 +32,13 @@ module.exports = (grunt) ->
 				src: ['test/**/*.coffee']
 
 		watch:
-			lint:
+			dev:
 				files: ['src/*.coffee', 'test/*.coffee']
 				tasks: ['lint', 'test']
+
+			test:
+				files: ['src/*.coffee', 'test/*.coffee']
+				tasks: ['test']
 
 	grunt.registerTask 'default', ["build"]
 
@@ -44,4 +48,4 @@ module.exports = (grunt) ->
 	grunt.registerTask 'lint', ['coffeelint:build']
 	grunt.registerTask 'test', ['mochaTest:test']
 
-	grunt.registerTask 'watch-dev', ['watch:lint']
+	grunt.registerTask 'watch-dev', ['watch:dev']
