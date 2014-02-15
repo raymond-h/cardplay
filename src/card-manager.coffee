@@ -7,7 +7,7 @@ vm = require 'vm'
 fileUtils = require './file-utils'
 {Card} = require './game'
 
-exports.getJsSource = getJsSource = (file) ->
+getJsSource = (file) ->
 	file = path.resolve file
 	contents = fs.readFileSync file, encoding: 'utf-8'
 
@@ -15,10 +15,7 @@ exports.getJsSource = getJsSource = (file) ->
 		when '.js' then return contents
 
 		when '.coffee', '.lit-coffee', '.coffee.md'
-			try
-				return CoffeeScript.compile contents, filename: file
-			catch e
-				console.error e.stack
+			return CoffeeScript.compile contents, filename: file
 
 class CardManager
 	constructor: () ->
@@ -58,3 +55,4 @@ class CardManager
 		, callback
 
 module.exports = {CardManager}
+module.exports.getJsSource = getJsSource
