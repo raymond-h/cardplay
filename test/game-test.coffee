@@ -5,6 +5,25 @@ chai.should()
 
 describe 'Game logic', ->
 	{Session, Player, Card, Field, Health} = require '../src/game'
+	{CardManager} = require '../src/card-manager'
+	testCard = cardManager = null
+
+
+	before ->
+		cardManager = new CardManager
+		testCard = cardManager.addCard 'unit',
+			id: 'se.kayarr.tester_of_worlds'
+			
+			name: "Tester of Worlds"
+
+			desc: "On entry, heals user 20 HP."
+
+			flavor: "
+				His less destructive tendencies compared to his brethen
+				made him a lot more popular among the townspeople.
+			"
+
+			maxHealth: 30
 
 	describe 'Session', ->
 		describe '.toJSON()', ->
@@ -72,7 +91,7 @@ describe 'Game logic', ->
 					]
 				}
 
-				session = Session.fromJSON json
+				session = Session.fromJSON json, cardManager
 
 				expect(session).to.exist.and.be.instanceof Session
 				session.turn.should.equal 1
@@ -102,22 +121,32 @@ describe 'Game logic', ->
 
 		describe '.fromJSON()', ->
 			it 'should return a Field instance from the given JSON', ->
+				inst =
+					card: 'se.kayarr.tester_of_worlds'
+					health:
+						current: 30
+						max: 30
+
 				json = {
 					width: 6, height: 2
 					field: [
 						[ null, null, null, null, null, null ]
-						[ null, null, null, null, null, null ]
+						[ null, inst, null, null, null, null ]
 					]
 				}
 
-				field = Field.fromJSON json
+				field = Field.fromJSON json, cardManager
 
 				field.width.should.equal 6
 				field.height.should.equal 2
-				field.field.should.deep.equal [
-					[ null, null, null, null, null, null ]
-					[ null, null, null, null, null, null ]
-				]
+
+				field.field[1][1].should.have.property 'card', testCard
+				field.field[1][1].health.should.be.instanceof Health
+
+				for row, y in field.field
+					for v, x in row
+						expect(v).to.be.null if x isnt 1 and y isnt 1
+				
 
 	describe 'Player', ->
 		describe '.toJSON()', ->
@@ -153,7 +182,7 @@ describe 'Game logic', ->
 					}
 				}
 
-				player = Player.fromJSON json
+				player = Player.fromJSON json, cardManager
 
 				player.username.should.equal 'kayarr'
 				player.deck.should.be.instanceof(Array).and.have.length 0

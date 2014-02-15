@@ -63,6 +63,7 @@ class Field
 					inst = { card: cardManager.cards[v.card] }
 					if v.health?
 						inst.health = new Health v.health.max, v.health.current
+					inst
 
 		field
 
