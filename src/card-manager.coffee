@@ -35,7 +35,7 @@ class CardManager
 
 		vm.runInNewContext code, sandbox, file
 
-		readyCallback addCard
+		readyCallback @addCard
 
 	loadFile: (file) ->
 		file = path.resolve file
