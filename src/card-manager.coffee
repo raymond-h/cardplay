@@ -25,6 +25,11 @@ class CardManager
 	constructor: () ->
 		@cards = {}
 
+	addCard: (type, config) =>
+		if typeof type is 'string' and config? then config.type = type
+
+		@cards[config.id] = new Card config # also returns the created card
+
 	loadScript: (code, file) ->
 		readyCallback = ->
 
@@ -34,10 +39,7 @@ class CardManager
 
 		vm.runInNewContext code, sandbox, file
 
-		readyCallback (type, config) =>
-			if typeof type is 'string' and config? then config.type = type
-
-			@cards[config.id] = new Card config # also returns the created card
+		readyCallback addCard
 
 	loadFile: (file) ->
 		file = path.resolve file
