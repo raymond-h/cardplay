@@ -29,7 +29,7 @@ module.exports = (grunt) ->
 					reporter: 'spec'
 					require: ['coffee-script/register']
 
-				src: ['test/**/*.coffee']
+				src: ['test/**/*-test.coffee']
 
 		watch:
 			dev:
