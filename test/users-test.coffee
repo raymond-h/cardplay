@@ -19,7 +19,6 @@ describe 'UserStorage', ->
 		db = new UserStorage userDb
 
 	beforeEach (done) ->
-		db.loggedInUsers = []
 		userDb.remove {}, done
 
 	describe '.validateUsername()', ->
@@ -48,6 +47,7 @@ describe 'UserStorage', ->
 				expect(user).to.exist
 				user.should.have.property 'username', 'kayarr'
 				user.should.have.property 'password', 'boat'
+				user.should.have.property 'loggedIn', false
 
 			.nodeify done
 
@@ -88,9 +88,11 @@ describe 'UserStorage', ->
 
 						user.should.deep.equal { username: 'kayarr', password: 'boat' }
 
-						db.loggedInUsers.should.contain 'kayarr'
+						db.get 'kayarr', asyncCatch(done) (err, user) ->
 
-						done()
+							user.loggedIn.should.be.true
+
+							done()
 
 		it 'should return an error if the password is wrong', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
@@ -103,9 +105,12 @@ describe 'UserStorage', ->
 					err.message.should.equal 'Invalid username or password'
 					expect(user).to.not.exist
 
-					db.loggedInUsers.should.not.contain 'kayarr'
+					db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+						throw err if err?
 
-					done()
+						loggedIn.should.be.false
+
+						done()
 
 		it 'should return an error if given a nonexistant user', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
@@ -118,11 +123,14 @@ describe 'UserStorage', ->
 					err.message.should.equal 'Invalid username or password'
 					expect(user).to.not.exist
 
-					db.loggedInUsers.should.not.contain ['kayarr', 'woot']
+					db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+						throw err if err?
 
-					done()
+						loggedIn.should.be.false
 
-	describe 'logout()', ->
+						done()
+
+	describe '.logout()', ->
 		it 'should log a user out if logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
 				return done err if err?
@@ -131,9 +139,13 @@ describe 'UserStorage', ->
 
 					db.logout 'kayarr', asyncCatch(done) (err) ->
 						expect(err).to.not.exist
-						db.loggedInUsers.should.not.contain 'kayarr'
+						
+						db.isLoggedIn 'kayarr', asyncCatch(done) (err, loggedIn) ->
+							throw err if err?
 
-						done()
+							loggedIn.should.be.false
+
+							done()
 
 		it 'should return an error if the specified user is not logged in', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->

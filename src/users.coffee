@@ -4,7 +4,6 @@ class UserStorageError extends Error
 
 class UserStorage
 	constructor: (@db) ->
-		@loggedInUsers = []
 
 	validateUsername: (username) ->
 		/^[a-zA-Z_-]+$/.test username
@@ -23,7 +22,7 @@ class UserStorage
 				callback new UserStorageError "Username '#{username}' is already taken",
 					'username-taken'
 
-			else @db.insert { username, password }, callback
+			else @db.insert { username, password, loggedIn: false }, callback
 
 	login: (username, password, callback) ->
 		# callback: (err, user)
@@ -32,8 +31,9 @@ class UserStorage
 			return callback err if err?
 
 			if user? and user.password is password
-				@loggedInUsers.push username if not (username in @loggedInUsers)
-				callback null, { username, password }
+				@db.update { username }, $set: loggedIn: true, (err, count) ->
+
+					callback null, { username, password }
 
 			else
 				callback new UserStorageError 'Invalid username or password',
@@ -42,15 +42,16 @@ class UserStorage
 	logout: (username, callback) ->
 		# callback: (err)
 
-		if username in @loggedInUsers
-			i = @loggedInUsers.indexOf username
-			@loggedInUsers[i..i] = []
+		@isLoggedIn username, (err, loggedIn) =>
+			return callback err if err?
 
-			callback null
+			if loggedIn
+				@db.update { username }, $set: loggedIn: false, (err, count) ->
+					callback err
 
-		else
-			callback new UserStorageError "Username '#{username}' is not logged in",
-				'not-logged-in'
+			else
+				callback new UserStorageError "Username '#{username}' is not logged in",
+					'not-logged-in'
 
 	get: (username, callback) ->
 		# callback: (err, user)
@@ -68,16 +69,17 @@ class UserStorage
 	isLoggedIn: (username, callback) ->
 		# callback: (err, loggedIn)
 
-		if username in @loggedInUsers then callback null, true
-
-		else @isRegistered username, (err, registered) ->
+		@isRegistered username, (err, registered) =>
 			return callback err if err?
 
 			if not registered
 				callback new UserStorageError "Username '#{username}' does not exist",
 					'invalid-username'
 
-			else callback null, false
+			else @get username, (err, user) ->
+				return callback err if err?
+
+				callback null, (user.loggedIn ? false)
 
 	close: ->
 
