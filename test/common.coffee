@@ -6,8 +6,8 @@
 # function being tested. This means that any errors thrown in the callback
 # will be caught and automatically passed to the done callback.
 #
-# If no errors are thrown, done isn't automatically called - you need to call it yourself
-# (in case you need to do more async function calls)
+# If no errors are thrown, done isn't automatically called - you need to
+# call it yourself (in case you need to do more async function calls)
 
 exports.asyncCatch = (done) ->
 	(callback) -> (args...) ->

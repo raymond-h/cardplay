@@ -40,6 +40,10 @@ module.exports = (grunt) ->
 				files: ['src/*.coffee', 'test/*.coffee']
 				tasks: ['test']
 
+			lint:
+				files: ['src/*.coffee', 'test/*.coffee']
+				tasks: ['lint']
+
 	grunt.registerTask 'default', ["build"]
 
 	grunt.registerTask 'build', ['lint', 'test', 'coffee:build']

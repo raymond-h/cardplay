@@ -33,7 +33,9 @@ describe 'CardManager', ->
 
 			source.should.equal code
 
-		it 'should automatically compile .coffee files to Javascript and return that', ->
+		it 'should automatically compile .coffee files to
+			Javascript and return that', ->
+
 			code = """
 				ready (addCard) ->
 					addCard 'unit',

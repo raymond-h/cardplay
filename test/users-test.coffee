@@ -52,14 +52,15 @@ describe 'UserStorage', ->
 			.nodeify done
 
 		it 'should return an error if given an invalid username', (done) ->
-			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah', asyncCatch(done) (err, user) ->
+			db.register 'U#(YTU =¤WITWYHUOcrazy', 'hahah',
+				asyncCatch(done) (err, user) ->
 
-				expect(err).to.exist.and.be.an.instanceof Error
-				err.should.have.property 'code', 'invalid-username'
-				err.message.should.equal "Invalid username 'U#(YTU =¤WITWYHUOcrazy'"
-				expect(user).to.not.exist
+					expect(err).to.exist.and.be.an.instanceof Error
+					err.should.have.property 'code', 'invalid-username'
+					err.message.should.equal "Invalid username 'U#(YTU =¤WITWYHUOcrazy'"
+					expect(user).to.not.exist
 
-				done()
+					done()
 
 		it 'should return an error if a username is already taken', (done) ->
 			db.register 'kayarr', 'boat', (err, user) ->
@@ -139,11 +140,11 @@ describe 'UserStorage', ->
 				return done err if err?
 
 				db.logout 'kayarr', asyncCatch(done) (err) ->
-						expect(err).to.exist
-						err.message.should.equal "Username 'kayarr' is not logged in"
-						err.should.have.property 'code', 'not-logged-in'
+					expect(err).to.exist
+					err.message.should.equal "Username 'kayarr' is not logged in"
+					err.should.have.property 'code', 'not-logged-in'
 
-						done()
+					done()
 
 	describe '.isRegistered()', ->
 		it 'should return true if the user name exists', (done) ->
