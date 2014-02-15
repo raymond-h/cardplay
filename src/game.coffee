@@ -60,9 +60,12 @@ class Field
 				if not v? then null
 
 				else
-					inst = { card: cardManager.cards[v.card] }
+					inst = cardManager.cards[v.card].newInstance()
+
 					if v.health?
-						inst.health = new Health v.health.max, v.health.current
+						inst.health.current = v.health.current
+						inst.health.max = v.health.max
+
 					inst
 
 		field
