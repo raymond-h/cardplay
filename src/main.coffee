@@ -3,7 +3,7 @@ Q = require 'q'
 Datastore = require 'nedb'
 _ = require 'underscore'
 
-CardManager = require './card-manager'
+{CardManager} = require './card-manager'
 sendUtils = require './send-utils'
 UserStorage = require './users'
 ChallengeStorage = require './challenges'
@@ -20,6 +20,8 @@ sessionStorage = new SessionStorage sessionDb
 
 usernameSockets = {}
 
+cardManager = new CardManager
+
 userStorage.register 'kayarr', 'boat', (err, user) ->
 userStorage.register 'master', 'boat', (err, user) ->
 userStorage.register 'strack', 'boat', (err, user) ->
@@ -27,7 +29,9 @@ userStorage.register 'strack', 'boat', (err, user) ->
 challengeStorage.add sender: 'kayarr', receiver: 'master', ->
 challengeStorage.add sender: 'strack', receiver: 'kayarr', ->
 
-CardManager.load './cards', ->
+cardManager.loadFolder './cards', ->
+
+	console.log "Loaded", cardManager.cards
 
 	net.createServer (socket) ->
 		sendUtils.extendSocket socket

@@ -2,6 +2,7 @@ path = require 'path'
 fs = require 'fs'
 _ = require 'underscore'
 CoffeeScript = require 'coffee-script'
+vm = require 'vm'
                
 fileUtils = require './file-utils'
 game = require './game'
@@ -20,43 +21,39 @@ getJsSource = (file) ->
 			catch e
 				console.error e.stack
 
-loadScript = (file, callback) ->
-	file = path.resolve file
-	source = getJsSource file
+class CardManager
+	constructor: () ->
+		@cards = {}
 
-	runScript source, file, callback
+	loadScript: (code, file) ->
+		readyCallback = ->
 
-runScript = (code, file, callback) ->
-	vm = require 'vm'
+		sandbox =
+			ready: (callback) -> readyCallback = callback
+			console: console
 
-	readyCallback = ->
+		vm.runInNewContext code, sandbox, file
 
-	sandbox =
-		ready: (callback) -> readyCallback = callback
-		console: console
+		readyCallback (type, config) =>
+			if typeof type is 'string' and config? then config.type = type
 
-	vm.runInNewContext code, sandbox, file
+			@cards[config.id] = new Card config # also returns the created card
 
-	cards = []
+	loadFile: (file) ->
+		file = path.resolve file
+		source = getJsSource file
 
-	readyCallback (type, config) ->
-		if typeof type is 'string' and config? then config.type = type
+		@loadScript source, file
 
-		cards.push (c = new Card config)
-		return c
+	loadFolder: (folder, callback) ->
+		fileUtils.walkFolder folder, (err, file) =>
+			if err?
+				console.error err.stack
+				return
 
-	console.log "Added", cards
+			if (path.extname file) in ['.js', '.coffee', '.litcoffee', '.coffee.md']
+				@loadFile file
 
-	callback? null, cards
+		, callback
 
-exports.load = (folder, callback) ->
-	fileUtils.walkFolder folder, (err, file) ->
-		if err?
-			console.error err.stack
-			return
-
-		# console.log "Got file #{file} with extension #{path.extname file}"
-		if (path.extname file) in ['.js', '.coffee', '.lit-coffee', '.coffee.md']
-			loadScript file
-
-	, callback
+module.exports = {CardManager}
