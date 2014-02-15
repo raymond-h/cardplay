@@ -15,12 +15,12 @@ userStorage = new UserStorage userDb
 challengeDb = new Datastore()
 challengeStorage = new ChallengeStorage challengeDb
 
+cardManager = new CardManager
+
 sessionDb = new Datastore()
-sessionStorage = new SessionStorage sessionDb
+sessionStorage = new SessionStorage sessionDb, cardManager
 
 usernameSockets = {}
-
-cardManager = new CardManager
 
 userStorage.register 'kayarr', 'boat', (err, user) ->
 userStorage.register 'master', 'boat', (err, user) ->

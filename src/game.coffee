@@ -24,8 +24,8 @@ class Session extends EventEmitter
 
 		json
 
-	@fromJSON: (json) ->
-		players = (Player.fromJSON p for p in json.players)
+	@fromJSON: (json, cardManager) ->
+		players = (Player.fromJSON p, cardManager for p in json.players)
 
 		new Session players, json.turn, json.round
 
@@ -51,7 +51,7 @@ class Field
 					}
 		}
 
-	@fromJSON: (json) ->
+	@fromJSON: (json, cardManager) ->
 		{width, height} = json
 		field = new Field width, height
 
@@ -60,7 +60,7 @@ class Field
 				if not v? then null
 
 				else
-					inst = { card: null } # TODO get reference to card object by id
+					inst = { card: cardManager.cards[v.card] }
 					if v.health?
 						inst.health = new Health v.health.max, v.health.current
 
@@ -98,8 +98,8 @@ class Player
 			field: @field.toJSON()
 		}
 
-	@fromJSON: (json) ->
-		field = Field.fromJSON json.field
+	@fromJSON: (json, cardManager) ->
+		field = Field.fromJSON json.field, cardManager
 
 		_.extend (new Player json.username, field),
 			_.pick json, 'deck', 'hand', 'discard'

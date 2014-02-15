@@ -3,7 +3,7 @@ _ = require 'underscore'
 {Session, Field, Card, Player} = require './game'
 
 class SessionStorage
-	constructor: (@db) ->
+	constructor: (@db, @cardManager) ->
 
 	getForUser: (username, callback) ->
 		# callback: (err, sessions array of object literals)
@@ -24,7 +24,7 @@ class SessionStorage
 	load: (id, callback) ->
 		# callback: (err, session instance)
 
-		@db.findOne _id: id, (err, doc) ->
+		@db.findOne _id: id, (err, doc) =>
 			if err? then callback err
 			else
 				if not doc?
@@ -32,7 +32,7 @@ class SessionStorage
 						code: 'nonexistant-session'
 						id: id
 				else
-					session = Session.fromJSON doc
+					session = Session.fromJSON doc, @cardManager
 					callback null, session
 
 	save: (session, callback) ->
