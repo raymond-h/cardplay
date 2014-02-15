@@ -156,15 +156,17 @@ handleJsonData = (socket, data) ->
 				# 	challenge:", challenge
 
 				if challenge.sender is socket.username
-					console.error "#{socket.username} tried to #{reply} a challenge they sent themselves"
+					console.error "#{socket.username} tried to #{reply} a
+									challenge they sent themselves"
 
 				else if reply is 'accept'
-					sessionStorage.new [challenge.sender, challenge.receiver], (err, session) ->
-						console.log "Created new session!
-							#{session.players[0].username} vs #{session.players[1].username}!"
+					sessionStorage.new [challenge.sender, challenge.receiver],
+						(err, session) ->
+							console.log "Created new session!
+								#{session.players[0].username} vs #{session.players[1].username}!"
 
-						challengeStorage.remove challenge._id, (err) ->
-							console.log "Removed accepted challenge"
+							challengeStorage.remove challenge._id, (err) ->
+								console.log "Removed accepted challenge"
 
 				else
 					challengeStorage.remove challenge._id, (err) ->
