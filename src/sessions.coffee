@@ -34,6 +34,11 @@ class SessionStorage
 				session.id = doc._id
 				callback null, session
 
+	get: (id, callback) ->
+		# callback: (err, session object literal)
+
+		@db.findOne _id: id, callback
+
 	load: (id, callback) ->
 		# callback: (err, session instance)
 

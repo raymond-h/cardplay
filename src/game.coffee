@@ -27,7 +27,10 @@ class Session extends EventEmitter
 	@fromJSON: (json, cardManager) ->
 		players = (Player.fromJSON p, cardManager for p in json.players)
 
-		new Session players, json.turn, json.round
+		s = new Session players, json.turn, json.round
+		s.id = json._id
+
+		s
 
 class Player
 	constructor: (@username, params) ->

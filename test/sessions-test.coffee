@@ -81,6 +81,18 @@ describe 'SessionStorage', ->
 
 		# it 'should return an error if the given user names are not registered'
 
+	describe '.get()', ->
+		it 'should return a session object literal with the given ID', (done) ->
+			db.new ['kayarr', 'master'], (err, s) ->
+				return done err if err?
+
+				db.get s.id, asyncCatch(done) (err, session) ->
+					throw err if err?
+
+					session.should.deep.equal s.toJSON()
+
+					done()
+
 	describe '.load()', ->
 		it 'should create a Session object from a document with the given ID',
 		(done) ->
