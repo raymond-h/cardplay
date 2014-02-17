@@ -11,11 +11,27 @@ _ = require 'underscore'
 describe 'SessionStorage', ->
 	{Session, Player, Field, Health} = require '../src/game'
 	SessionStorage = require '../src/sessions'
-	datastore = db = null
+	{CardManager} = require '../src/card-manager'
+	cardManager = testCard = datastore = db = null
 
 	before ->
+		cardManager = new CardManager
+		testCard = cardManager.addCard 'unit',
+			id: 'se.kayarr.tester_of_worlds'
+			
+			name: "Tester of Worlds"
+
+			desc: "On entry, heals user 20 HP."
+
+			flavor: "
+				His less destructive tendencies compared to his brethen
+				made him a lot more popular among the townspeople.
+			"
+
+			maxHealth: 30
+
 		datastore = new Datastore()
-		db = new SessionStorage datastore
+		db = new SessionStorage datastore, cardManager
 
 	afterEach (done) ->
 		datastore.remove {}, multi: yes, done

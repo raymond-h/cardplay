@@ -12,12 +12,19 @@ class SessionStorage
 
 	new: (usernames, callback) ->
 		# callback: (err, session instance)
+
+		cards = (v for k,v of @cardManager.cards)
+
 		players = for username in usernames
+			deck = ( cards[Math.random()*cards.length // 1].newInstance() for i in [1..60] )
+			hand = ( deck.pop() for i in [1..5] )
+
 			new Player username,
 				field: new Field
 				health: new Health 500
 
-				hand: [], deck: [], discard: []
+				hand: hand, deck: deck
+				discard: []
 
 		session = new Session players
 
