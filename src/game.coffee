@@ -29,6 +29,53 @@ class Session extends EventEmitter
 
 		new Session players, json.turn, json.round
 
+class Player
+	constructor: (@username, params) ->
+		{@deck, @hand, @discard, @health, @field} = params
+
+	playCard: (instance, x, y) ->
+		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
+
+		# assuming instance exists on hand for now...
+		i = @hand.indexOf instance
+		@hand[i..i] = []
+
+		switch instance.card.type
+			when 'unit'
+				# place unit at position x,y
+				@field.put instance, x, y
+				
+			when 'action'
+				# perform action (x, y are unused)
+				# move to discard pile
+				discard.push instance
+
+	toJSON: ->
+		# console.log @
+		{
+			username: @username
+
+			deck: @deck, hand: @hand
+			discard: @discard
+
+			health:
+				current: @health.current
+				max: @health.max
+
+			field: @field.toJSON()
+		}
+
+	@fromJSON: (json, cardManager) ->
+		params =
+			field: Field.fromJSON json.field, cardManager
+			health: new Health json.health.max, json.health.current
+
+			hand: json.hand
+			deck: json.deck
+			discard: json.discard
+
+		new Player json.username, params
+
 class Field
 	constructor: (@width = 6, @height = 2) ->
 		@field = (null for x in [0...@width] for y in [0...@height])
@@ -86,53 +133,6 @@ class Field
 					unit
 
 		field
-
-class Player
-	constructor: (@username, params) ->
-		{@deck, @hand, @discard, @health, @field} = params
-
-	playCard: (instance, x, y) ->
-		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
-
-		# assuming instance exists on hand for now...
-		i = @hand.indexOf instance
-		@hand[i..i] = []
-
-		switch instance.card.type
-			when 'unit'
-				# place unit at position x,y
-				@field.put instance, x, y
-				
-			when 'action'
-				# perform action (x, y are unused)
-				# move to discard pile
-				discard.push instance
-
-	toJSON: ->
-		# console.log @
-		{
-			username: @username
-
-			deck: @deck, hand: @hand
-			discard: @discard
-
-			health:
-				current: @health.current
-				max: @health.max
-
-			field: @field.toJSON()
-		}
-
-	@fromJSON: (json, cardManager) ->
-		params =
-			field: Field.fromJSON json.field, cardManager
-			health: new Health json.health.max, json.health.current
-
-			hand: json.hand
-			deck: json.deck
-			discard: json.discard
-
-		new Player json.username, params
 
 class Card extends EventEmitter
 	constructor: (config) ->
