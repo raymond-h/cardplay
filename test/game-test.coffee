@@ -29,8 +29,15 @@ describe 'Game logic', ->
 		describe '.toJSON()', ->
 			it 'should return a JSON representation of a session', ->
 				session = new Session [
-					new Player 'kayarr', new Field
-					new Player 'master', new Field
+					new Player 'kayarr',
+						field: new Field
+						health: new Health 500
+						hand: [], deck: [], discard: []
+
+					new Player 'master',
+						field: new Field
+						health: new Health 500
+						hand: [], deck: [], discard: []
 				]
 
 				expect( session.toJSON() ).to.exist.and.deep.equal {
@@ -39,6 +46,10 @@ describe 'Game logic', ->
 						{
 							username: 'kayarr', deck: [],
 							hand: [], discard: [],
+							health:
+								current: 500
+								max: 500
+
 							field: {
 								width: 6, height: 2
 								field: [
@@ -50,6 +61,10 @@ describe 'Game logic', ->
 						{
 							username: 'master', deck: [],
 							hand: [], discard: [],
+							health:
+								current: 500
+								max: 500
+
 							field: {
 								width: 6, height: 2
 								field: [
@@ -69,6 +84,10 @@ describe 'Game logic', ->
 						{
 							username: 'kayarr', deck: [],
 							hand: [], discard: [],
+							health:
+								current: 500
+								max: 500
+
 							field: {
 								width: 6, height: 2
 								field: [
@@ -80,6 +99,10 @@ describe 'Game logic', ->
 						{
 							username: 'master', deck: [],
 							hand: [], discard: [],
+							health:
+								current: 500
+								max: 500
+
 							field: {
 								width: 6, height: 2
 								field: [
@@ -151,11 +174,23 @@ describe 'Game logic', ->
 	describe 'Player', ->
 		describe '.toJSON()', ->
 			it 'should return a JSON representation of a Player instance', ->
-				player = new Player 'kayarr', new Field
+				playerParams =
+					field: new Field
+					health: new Health 500
+
+					hand: []
+					deck: []
+					discard: []
+
+				player = new Player 'kayarr', playerParams
 
 				expected = {
 					username: 'kayarr'
 					deck: [], hand: [], discard: []
+					health:
+						current: 500
+						max: 500
+
 					field: {
 						width: 6, height: 2
 						field: [
@@ -164,6 +199,7 @@ describe 'Game logic', ->
 						]
 					}
 				}
+
 				serialized = player.toJSON()
 
 				expect(serialized).to.deep.equal expected
@@ -173,6 +209,10 @@ describe 'Game logic', ->
 				json = {
 					username: 'kayarr'
 					deck: [], hand: [], discard: []
+					health:
+						current: 500
+						max: 500
+
 					field: {
 						width: 6, height: 2
 						field: [

@@ -9,7 +9,7 @@ Q = require 'q'
 _ = require 'underscore'
 
 describe 'SessionStorage', ->
-	{Session, Player, Field} = require '../src/game'
+	{Session, Player, Field, Health} = require '../src/game'
 	SessionStorage = require '../src/sessions'
 	datastore = db = null
 
@@ -114,8 +114,15 @@ describe 'SessionStorage', ->
 			does not exist already', (done) ->
 				
 			session = new Session [
-				new Player 'kayarr', new Field
-				new Player 'master', new Field
+				new Player 'kayarr',
+					field: new Field
+					health: new Health 500
+					hand: [], deck: [], discard: []
+
+				new Player 'master',
+					field: new Field
+					health: new Health 500
+					hand: [], deck: [], discard: []
 			]
 
 			session.progressTurn() for i in [1..11] # progress 11 turns

@@ -88,11 +88,8 @@ class Field
 		field
 
 class Player
-	constructor: (@username, @field = null) ->
-		@deck = []
-		@hand = []
-		@discard = []
-		@health = {}
+	constructor: (@username, params) ->
+		{@deck, @hand, @discard, @health, @field} = params
 
 	playCard: (instance, x, y) ->
 		return if this isnt @session.currentPlayer # if it isn't our turn, bail out
@@ -112,18 +109,30 @@ class Player
 				discard.push instance
 
 	toJSON: ->
+		# console.log @
 		{
-			username: @username,
-			deck: @deck, hand: @hand,
-			discard: @discard,
+			username: @username
+
+			deck: @deck, hand: @hand
+			discard: @discard
+
+			health:
+				current: @health.current
+				max: @health.max
+
 			field: @field.toJSON()
 		}
 
 	@fromJSON: (json, cardManager) ->
-		field = Field.fromJSON json.field, cardManager
+		params =
+			field: Field.fromJSON json.field, cardManager
+			health: new Health json.health.max, json.health.current
 
-		_.extend (new Player json.username, field),
-			_.pick json, 'deck', 'hand', 'discard'
+			hand: json.hand
+			deck: json.deck
+			discard: json.discard
+
+		new Player json.username, params
 
 class Card extends EventEmitter
 	constructor: (config) ->

@@ -1,6 +1,6 @@
 _ = require 'underscore'
 
-{Session, Field, Card, Player} = require './game'
+{Session, Field, Card, Player, Health} = require './game'
 
 class SessionStorage
 	constructor: (@db, @cardManager) ->
@@ -12,7 +12,13 @@ class SessionStorage
 
 	new: (usernames, callback) ->
 		# callback: (err, session instance)
-		players = (new Player(u, new Field) for u in usernames)
+		players = for username in usernames
+			new Player username,
+				field: new Field
+				health: new Health 500
+
+				hand: [], deck: [], discard: []
+
 		session = new Session players
 
 		@db.insert session.toJSON(), (err, doc) ->
