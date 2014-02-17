@@ -33,9 +33,21 @@ class Field
 	constructor: (@width = 6, @height = 2) ->
 		@field = (null for x in [0...@width] for y in [0...@height])
 
-	put: (instance, x, y) ->
-		@field[y][x] = instance
+	putDown: (instance, x, y) ->
+		@field[y][x] = {
+			instance
+			card: instance.card
+
+			health: new Health instance.maxHealth
+		}
 		# emit event
+
+	pickUp: (x, y) ->
+		unit = @field[y][x]
+
+		@field[y][x] = null
+
+		return unit.instance
 
 	toJSON: ->
 		{
@@ -47,7 +59,9 @@ class Field
 
 					else {
 						card: v.card.id
-						health: v.health
+						health:
+							current: v.health.current
+							max: v.health.max
 					}
 		}
 
@@ -60,13 +74,16 @@ class Field
 				if not v? then null
 
 				else
-					inst = cardManager.cards[v.card].newInstance()
+					instance = cardManager.cards[v.card].newInstance()
 
-					if v.health?
-						inst.health.current = v.health.current
-						inst.health.max = v.health.max
+					unit = {
+						instance
+						card: instance.card
 
-					inst
+						health: new Health v.health.max, v.health.current
+					}
+
+					unit
 
 		field
 
@@ -116,7 +133,7 @@ class Card extends EventEmitter
 		inst = new Object @
 
 		inst.card = @
-		
+
 		return inst
 
 class Health
