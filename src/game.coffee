@@ -55,8 +55,9 @@ class Player
 		{
 			username: @username
 
-			deck: @deck, hand: @hand
-			discard: @discard
+			deck: ({card: inst.card.id} for inst in @deck)
+			hand: ({card: inst.card.id} for inst in @hand)
+			discard: ({card: inst.card.id} for inst in @discard)
 
 			health:
 				current: @health.current
@@ -70,9 +71,9 @@ class Player
 			field: Field.fromJSON json.field, cardManager
 			health: new Health json.health.max, json.health.current
 
-			hand: json.hand
-			deck: json.deck
-			discard: json.discard
+			hand: (cardManager.cards[inst.card].newInstance() for inst in json.hand)
+			deck: (cardManager.cards[inst.card].newInstance() for inst in json.deck)
+			discard: (cardManager.cards[inst.card].newInstance() for inst in json.discard)
 
 		new Player json.username, params
 

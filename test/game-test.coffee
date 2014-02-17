@@ -32,19 +32,19 @@ describe 'Game logic', ->
 					new Player 'kayarr',
 						field: new Field
 						health: new Health 500
-						hand: [], deck: [], discard: []
+						hand: [], deck: [testCard.newInstance()], discard: []
 
 					new Player 'master',
 						field: new Field
 						health: new Health 500
-						hand: [], deck: [], discard: []
+						hand: [], deck: [testCard.newInstance()], discard: []
 				]
 
 				expect( session.toJSON() ).to.exist.and.deep.equal {
 					turn: 0, round: 1
 					players: [
 						{
-							username: 'kayarr', deck: [],
+							username: 'kayarr', deck: [{card: testCard.id}],
 							hand: [], discard: [],
 							health:
 								current: 500
@@ -59,7 +59,7 @@ describe 'Game logic', ->
 							}
 						}
 						{
-							username: 'master', deck: [],
+							username: 'master', deck: [{card: testCard.id}],
 							hand: [], discard: [],
 							health:
 								current: 500
@@ -82,7 +82,7 @@ describe 'Game logic', ->
 					turn: 1, round: 9
 					players: [
 						{
-							username: 'kayarr', deck: [],
+							username: 'kayarr', deck: [{card: testCard.id}],
 							hand: [], discard: [],
 							health:
 								current: 500
@@ -97,7 +97,7 @@ describe 'Game logic', ->
 							}
 						}
 						{
-							username: 'master', deck: [],
+							username: 'master', deck: [{card: testCard.id}],
 							hand: [], discard: [],
 							health:
 								current: 500
@@ -124,6 +124,11 @@ describe 'Game logic', ->
 				for player in session.players
 					player.should.be.instanceof Player
 					player.field.should.be.instanceof Field
+					
+					player.hand.should.be.empty
+					player.discard.should.be.empty
+					player.deck.should.be.length 1
+					player.deck[0].card.should.be.instanceof Card
 
 	describe 'Field', ->
 		describe '.toJSON()', ->
