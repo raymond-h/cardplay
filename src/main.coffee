@@ -201,6 +201,52 @@ handleJsonData = (socket, data) ->
 						type: 'sessions-list'
 						sessions: sessions
 
+		when 'session-fields'
+			sessionStorage.get data.sessionId, (err, session) ->
+				if err?
+					console.error err
+					return
+
+				fields = for player in session.players
+					field = player.field
+
+					{
+						width: field.width
+						height: field.height
+
+						owner: player.username
+
+						field: for row, y in field.field
+							for v, x in row
+
+								if v? then {
+									cardId: v.card.id
+									health:
+										current: v.health.current
+										max: v.health.max
+								}
+
+								else null
+					}
+
+				socket.writeJson
+					type: 'session-fields'
+					fields: fields
+
+		when 'session-hand'
+			sender = socket.username
+
+			sessionStorage.get data.sessionId, (err, session) ->
+				if err?
+					console.error err
+					return
+
+				player = _.find session.players, ((p) -> p.username is sender)
+
+				socket.writeJson
+					type: 'session-hand'
+					hand: (inst.card for inst in player.hand)
+
 		when 'test'
 
 			if not socket.username?
